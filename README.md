@@ -59,7 +59,7 @@ Then register your Query in config/graphql.php
 
 return [
     'queries' => [
-    	\App\Http\Graphql\Queries\Posts::class,
+	'posts' => \App\Http\Graphql\Queries\Posts::class,
     ],
 ];
 
@@ -108,7 +108,7 @@ Then register your Mutation in `config/graphql.php`
 
 return [
     'mutations' => [
-    	\App\Http\Graphql\Mutations\UpdateTitle::class,
+    	'updateTitle' => \App\Http\Graphql\Mutations\UpdateTitle::class,
     ],
 ];
 
