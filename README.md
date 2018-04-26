@@ -4,19 +4,53 @@ Butler GraphQL is an opinionated Laravel package that makes it quick and easy to
 
 ## Installation
 
-```
+```bash
 composer require glesys/butler-graphql
 ```
 
-## Routes
+Add the service provider to your `config/app`
 
-Butler GraphQL exposes a GraphQL controller which you can direct your routes to.
+Butler GraphQL exposes a service provider and a GraphQL controller which you can direct your routes to.
 
+### Laravel
+
+Add the service provider to `config/app.php`
+
+```php
+# config/app.php
+
+'providers' => [
+    ...
+    Butler\Graphql\ServiceProvider::class,
+    ...
+]
 ```
+
+```php
 # routes/web.php
 
 $router->get('/graphql', '\Butler\Graphql\GraphqlController');
 $router->post('/graphql', '\Butler\Graphql\GraphqlController');
+```
+
+### Lumen
+
+Add the service provider to `bootstrap/app.php`.
+
+```php
+# bootstrap/app.php
+$app->register(Butler\Graphql\ServiceProvider::class);
+```
+
+Add the routes to `routes/web.php`. You need to specify the namespace in a router group surrounding the routes in lumen.
+
+```php
+# routes/web.php
+
+$router->group(['namespace' => '\Butler\Graphql'], function () use ($router) {
+    $router->get('/graphql', 'GraphqlController');
+    $router->post('/graphql', 'GraphqlController');
+});
 ```
 
 ## Queries
@@ -44,22 +78,23 @@ class Posts
     {
         $query = Post::query();
         
-		if (isset($args['author'])) {
-			$query = $query->where('author', $args['author']);
-		}
+        if (isset($args['author'])) {
+            $query = $query->where('author', $args['author']);
+        }
         
-		return $query->get();
+        return $query->get();
     }
 }
 ```
 
 Then register your Query in config/graphql.php
-```
+
+```php
 <?php
 
 return [
     'queries' => [
-	'posts' => \App\Http\Graphql\Queries\Posts::class,
+    'posts' => \App\Http\Graphql\Queries\Posts::class,
     ],
 ];
 
@@ -71,6 +106,7 @@ Mutations are used to change data. Mutation have an input type which describes t
 wraps the results.
 
 Create the file `app/Http/Graphql/Mutations/UpdateTile.php`
+
 ```php
 <?php
 
@@ -80,8 +116,8 @@ class UpdateTitle
 {
     public $input = [
         'id' => [
-        	'type' => 'required|int',    
-		],
+            'type' => 'required|int',
+        ],
         'title' => [
             'type' => 'required|string',
             'description' => 'The new title of the post.',
@@ -103,12 +139,12 @@ class UpdateTitle
 ```
 
 Then register your Mutation in `config/graphql.php`
-```
+```php
 <?php
 
 return [
     'mutations' => [
-    	'updateTitle' => \App\Http\Graphql\Mutations\UpdateTitle::class,
+        'updateTitle' => \App\Http\Graphql\Mutations\UpdateTitle::class,
     ],
 ];
 
@@ -127,9 +163,9 @@ class Post
 {
     public $fields = [
         'id' => [
-        	'type' => 'required|int',
-        	'description' => 'Identifies a post.',    
-		],
+            'type' => 'required|int',
+            'description' => 'Identifies a post.',
+        ],
         'title' => [
             'type' => 'required|string',
             'description' => 'The title of the post.',
