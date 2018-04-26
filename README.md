@@ -150,6 +150,22 @@ return [
 
 ```
 
+A field called `status` is appended tothe output with a default value of `ok`. To override this value, return `status`
+from the `resolve` method.
+
+```php
+public function resolve($root, $args, $context)
+{
+    $post = ...;
+    $status = 'queued';
+
+    return compact('status', 'post');
+}
+```
+
+The purpose of this field is to allow you to have have mutations that doesn't return any data. You can also select
+this field when you are not interested in the output of the mutation.
+
 ## Types
 
 Types defines how your data is structured.
