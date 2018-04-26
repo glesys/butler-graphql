@@ -7,6 +7,7 @@ use Butler\Graphql\Tests\Examples\ExampleMutation;
 use Butler\Graphql\Tests\Examples\ExampleMutationWithoutInput;
 use Butler\Graphql\Tests\Examples\ExampleMutationWithoutOutput;
 use Butler\Graphql\Tests\Examples\ExampleMutationWithoutResolve;
+use Butler\Graphql\Tests\Examples\ExampleMutationWithStatusField;
 use Butler\Graphql\Tests\Examples\ExampleQuery;
 use Butler\Graphql\Tests\Examples\ExampleQueryWithoutResolve;
 use Butler\Graphql\Tests\Examples\ExampleQueryWithoutType;
@@ -15,6 +16,7 @@ use Butler\Graphql\TypeLoader;
 use Butler\Graphql\TypeRegistry;
 use Exception;
 use GraphQL\Type\Definition\InputObjectType;
+use GraphQL\Type\Definition\IntType;
 use GraphQL\Type\Definition\ListOfType;
 use GraphQL\Type\Definition\NonNull;
 use GraphQL\Type\Definition\ObjectType;
@@ -94,6 +96,45 @@ class TypeLoaderTest extends TestCase
                                     ],
                                 ],
                             ]),
+                            'status' => new NonNull(new StringType()),
+                        ],
+                    ]),
+                    'resolve' => function () {
+                    },
+                    'description' => null,
+                ],
+            ],
+        ], $mutations->config, 'create mutation correctly');
+    }
+
+    public function test_load_mutation_allows_overriding_status_field_type()
+    {
+        $mutations = $this->typeLoader()->loadMutations([ExampleMutationWithStatusField::class]);
+
+        $this->assertEquals([
+            'name' => 'Mutations',
+            'fields' => [
+                [
+                    'args' => [
+                        'input' => new InputObjectType([
+                            'name' => 'ExampleMutationWithStatusFieldInput',
+                            'fields' => [],
+                        ]),
+                    ],
+                    'type' => new ObjectType([
+                        'name' => 'ExampleMutationWithStatusFieldOutput',
+                        'fields' => [
+                            'example' => new ObjectType([
+                                'name' => 'ExampleType',
+                                'description' => null,
+                                'fields' => [
+                                    'author' => [
+                                        'description' => 'A property on Example',
+                                        'type' => new StringType(),
+                                    ],
+                                ],
+                            ]),
+                            'status' => new IntType(),
                         ],
                     ]),
                     'resolve' => function () {

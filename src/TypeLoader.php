@@ -86,7 +86,11 @@ class TypeLoader
             ],
             'description' => data_get($mutationInstance, 'description'),
             'resolve' => function ($root, $args, $context) use ($mutationInstance) {
-                return call_user_func([$mutationInstance, 'resolve'], $root, $args, $context);
+                $output = call_user_func([$mutationInstance, 'resolve'], $root, $args, $context);
+                if (!array_key_exists('status', $output)) {
+                    $output['status'] = 'ok';
+                }
+                return $output;
             },
             'type' => $this->fieldsForOutputType($className, $mutationInstance->output),
         ];
@@ -100,6 +104,10 @@ class TypeLoader
     private function fieldsForOutputType(string $className, array $config): ObjectType
     {
         $typeName = class_basename($className) . 'Output';
+
+        if (!array_key_exists('status', $config)) {
+            $config['status'] = 'required|string';
+        }
 
         return $this->typeRegistry->outputType($typeName, [
             'name' => $typeName,
@@ -158,7 +166,8 @@ class TypeLoader
      * @param $instance
      * @throws Exception
      */
-    private function validateQuery($instance): void {
+    private function validateQuery($instance): void
+    {
         if (!property_exists($instance, 'type')) {
             throw new Exception(get_class($instance) . ' must have a `type` property');
         }
