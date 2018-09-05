@@ -1,215 +1,105 @@
 # Butler GraphQL
 
-Butler GraphQL is an opinionated Laravel package that makes it quick and easy to provide GraphQL APIs. 
+Butler GraphQL is an opinionated package that makes it quick and easy to provide GraphQL APIs using Laravel.
 
-## Installation
+## Getting Started
+
+1. Install the `glesys/butler-graphql` package.
 
 ```bash
 composer require glesys/butler-graphql
 ```
 
-Add the service provider to your `config/app`
-
-Butler GraphQL exposes a service provider and a GraphQL controller which you can direct your routes to.
-
-### Laravel
-
-Add the service provider to `config/app.php`
+2. Add the Service Provider to your `config/app.php` config.
 
 ```php
-# config/app.php
-
 'providers' => [
-    ...
-    Butler\Graphql\ServiceProvider::class,
-    ...
+
+    \Butler\Graphql\ServiceProvider::class,
+
 ]
 ```
 
-```php
-# routes/web.php
+3. Create a GraphQL schema file. The default location is `app/Http/Graphql/schema.graphql`.
 
-$router->get('/graphql', '\Butler\Graphql\GraphqlController');
-$router->post('/graphql', '\Butler\Graphql\GraphqlController');
+```graphql
+type Query {
+    things: [Thing!]!
+}
+
+type Thing {
+    name: String!
+}
 ```
 
-### Lumen
-
-Add the service provider to `bootstrap/app.php`.
-
-```php
-# bootstrap/app.php
-$app->register(Butler\Graphql\ServiceProvider::class);
-```
-
-Add the routes to `routes/web.php`. You need to specify the namespace in a router group surrounding the routes in lumen.
-
-```php
-# routes/web.php
-
-$router->group(['namespace' => '\Butler\Graphql'], function () use ($router) {
-    $router->get('/graphql', 'GraphqlController');
-    $router->post('/graphql', 'GraphqlController');
-});
-```
-
-## Queries
-
-Queries are responsible for defining what data they return and how the data is loaded. 
-
-Create the file `app/Http/Graphql/Queries/Posts.php`.
+4. Create a query resolver. The default namespace of queries, mutations and types are `App\Http\Graphql\Queries`, `App\Http\Graphql\Mutations` and `App\Http\Graphql\Types`.
 
 ```php
 <?php
 
-namespace App\Http\Graphql\Queries;
+namespace App\Http\Grapql\Queries;
 
-class Posts
+class Things
 {
-    public $type = 'required|Post[]';
-    public $args = [
-        'author' => [
-            'type' => 'string',
-            'description' => 'Filter posts by author.',
-        ],
-    ];
-
-    public function resolve($root, $args, $context)
+    public function __invoke($root, $args, $context)
     {
-        $query = Post::query();
-        
-        if (isset($args['author'])) {
-            $query = $query->where('author', $args['author']);
-        }
-        
-        return $query->get();
+        return Thing::all();
     }
 }
 ```
 
-Then register your Query in config/graphql.php
+5. Add the `Butler\Graphql\Concerns\HandlesGraphqlRequests` trait to one of your
+    controllers.
 
 ```php
 <?php
 
-return [
-    'queries' => [
-    'posts' => \App\Http\Graphql\Queries\Posts::class,
-    ],
-];
+namespace App\Http\Controllers;
+
+use Butler\Graphql\Concerns\HandlesGraphqlRequests;
+
+class GraphqlController extends Controller
+{
+    use HandlesGraphqlRequests;
+}
+```
+
+5. Add a route for the GraphQL API endpoint.
+
+```php
+
+$router->match(['get', 'post'], '/graphql', \App\Http\Controllers\GraphqlController::class);
 
 ```
 
-## Mutations
+6. Use something like [GraphiQL](https://github.com/graphql/graphiql) or [Insomnia](https://insomnia.rest/) to interact with your GraphQL API.
 
-Mutations are used to change data. Mutation have an input type which describes the input data and an output type that
-wraps the results.
 
-Create the file `app/Http/Graphql/Mutations/UpdateTile.php`
+## Digging Deeper
+
+### Queries
+
+Queries are represented by classes in the `App\Http\Graphql\Queries` namespace. They should be named the same as the query but CamelCased, i.e. `pendingSignups` => `PendingSignups`.
+
+Queries are invoked as callables so all you need to do is implement the `__invoke` method.
 
 ```php
-<?php
 
-namespace App\Http\Graphql\Mutations;
-
-class UpdateTitle
+class PendingSignups
 {
-    public $input = [
-        'id' => [
-            'type' => 'required|int',
-        ],
-        'title' => [
-            'type' => 'required|string',
-            'description' => 'The new title of the post.',
-        ],
-    ];
-    public $output = [
-        'post' => 'Post'
-    ];
-
-    public function resolve($root, $args, $context)
+    /**
+     * @param  mixed  $root
+     * @param  array  $args
+     * @param  array  $context
+     * @param  \GraphQL\Type\Definition\ResolveInfo  $info
+     */
+    public function __invoke($root, $args, $context, $info)
     {
-        $post = Post::findOrFail($args['input']['id']);
-        $post->title = $args['input']['title'];
-        $post->save();
-        
-        return compact('post');
+        //
     }
 }
 ```
 
-Then register your Mutation in `config/graphql.php`
-```php
-<?php
+### Mutations
 
-return [
-    'mutations' => [
-        'updateTitle' => \App\Http\Graphql\Mutations\UpdateTitle::class,
-    ],
-];
-
-```
-
-A field called `status` is appended tothe output with a default value of `ok`. To override this value, return `status`
-from the `resolve` method.
-
-```php
-public function resolve($root, $args, $context)
-{
-    $post = ...;
-    $status = 'queued';
-
-    return compact('status', 'post');
-}
-```
-
-The purpose of this field is to allow you to have have mutations that doesn't return any data. You can also select
-this field when you are not interested in the output of the mutation.
-
-## Types
-
-Types defines how your data is structured.
-
-```php
-<?php
-
-namespace App\Http\Graphql\Types;
-
-class Post
-{
-    public $fields = [
-        'id' => [
-            'type' => 'required|int',
-            'description' => 'Identifies a post.',
-        ],
-        'title' => [
-            'type' => 'required|string',
-            'description' => 'The title of the post.',
-        ],
-        'author' => [
-            'type' => 'required|string',
-            'description' => 'The name of the author who wrote this post.',
-        ],
-        'comments' => [
-            'type' => 'Comment[]'
-        ],
-    ];
-}
-```
-
-The name of the Type is the same as the class name by default. If you want to override the name you can define the `name`
-property on the Type.
-
-```php
-<?php
-
-namespace App\Http\Graphql\Types;
-
-class Post
-{
-    public $name = "BlogPost";
-}
-```
-
-Types are loaded from the `App\Http\Graphql\Types` namespace by default. If you want to load additional namespaces you
-can add them to `namespaces` in `config/graphql.php`
+### Types

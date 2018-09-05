@@ -6,6 +6,15 @@ use GraphQL\Type\Definition\ResolveInfo;
 
 class Thing
 {
+    public function dataLoaded($source, $args, $context, ResolveInfo $info)
+    {
+        return $context['loader'](function ($names) {
+            return collect($names)->map(function ($name) {
+                return strtoupper($name);
+            });
+        })->load($source['name']);
+    }
+
     public function typeField($source, $args, $context, ResolveInfo $info)
     {
         return 'typeField value';
@@ -17,9 +26,4 @@ class Thing
             return 'typeFieldWithClosure value';
         };
     }
-
-    // public function missingType($source, $args, $context, ResolveInfo $info)
-    // {
-    //     return $source;
-    // }
 }

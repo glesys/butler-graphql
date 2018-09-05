@@ -1,6 +1,10 @@
 {
     "authors": [
         {
+            "name": "Christoffer Artmann",
+            "email": "christoffer.artmann@glesys.se"
+        },
+        {
             "name": "Christoffer Persson",
             "email": "christoffer@glesys.se"
         }

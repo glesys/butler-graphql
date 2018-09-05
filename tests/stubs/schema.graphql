@@ -1,5 +1,6 @@
 type Query {
     testResolvers: [Thing]
+    dataLoader: [Thing]
     throwException: String!
     throwModelNotFoundException: String!
     throwValidationException: String!
@@ -22,6 +23,7 @@ type Thing {
     typeField: String!
     typeFieldWithClosure: String!
     missingType: SubThing
+    dataLoaded: String!
 }
 
 type SubThing {

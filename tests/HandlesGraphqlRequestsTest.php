@@ -71,6 +71,26 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
         $this->assertSame('Hello World!', array_get($data, 'data.testMutation.message'));
     }
 
+    public function test_data_loader()
+    {
+        $controller = $this->app->make(GraphqlController::class);
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'query { dataLoader { dataLoaded } }'
+        ]));
+
+        $this->assertSame(
+            [
+                'data' => [
+                    'dataLoader' => [
+                        ['dataLoaded' => 'THING 1'],
+                        ['dataLoaded' => 'THING 2'],
+                    ],
+                ],
+            ],
+            $data
+        );
+    }
+
     public function test_error()
     {
         $controller = $this->app->make(GraphqlController::class);
@@ -125,17 +145,15 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
         $this->assertSame('client', array_get($data, 'errors.0.category'));
     }
 
-    // public function test_validation_error()
-    // {
-    //     $controller = $this->app->make(GraphqlController::class);
-    //     $data = $controller(Request::create('/', 'POST', [
-    //         'query' => 'query { throwValidationException }'
-    //     ]));
+    public function test_validation_error()
+    {
+        $controller = $this->app->make(GraphqlController::class);
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'query { throwValidationException }'
+        ]));
 
-    //     //dd($data);
-
-    //     $this->assertSame('validation', array_get($data, 'errors.0.message'));
-    //     $this->assertSame('validation', array_get($data, 'errors.0.category'));
-    //     $this->assertSame('client', array_get($data, 'errors.0.validation'));
-    // }
+        $this->assertSame('The given data was invalid.', array_get($data, 'errors.0.message'));
+        $this->assertSame('validation', array_get($data, 'errors.0.category'));
+        $this->assertSame(['foo' => ['The foo field is required.']], array_get($data, 'errors.0.validation'));
+    }
 }
