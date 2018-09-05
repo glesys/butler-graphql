@@ -27,9 +27,11 @@
     },
     "description": "An opinionated GraphQL package for Laravel",
     "extra": {
-        "laravel": [
-            "Butler\\Graphql\\ServiceProvider"
-        ]
+        "laravel": {
+            "providers": [
+                "Butler\\Graphql\\ServiceProvider"
+            ]
+        }
     },
     "license": "MIT",
     "name": "glesys/butler-graphql",
