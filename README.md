@@ -1,6 +1,6 @@
-![](https://travis-ci.org/glesys/butler-graphql.svg)
-![](https://poser.pugx.org/glesys/butler-graphql/v/stable.svg)
-![](https://poser.pugx.org/glesys/butler-graphql/license.svg)
+[![Build Status](https://travis-ci.org/glesys/butler-graphql.svg)](https://travis-ci.org/glesys/butler-graphql)
+[![Latest Stable Version](https://poser.pugx.org/glesys/butler-graphql/v/stable.svg)](https://packagist.org/packages/glesys/butler-graphql)
+[![License](https://poser.pugx.org/glesys/butler-graphql/license.svg)](LICENSE)
 
 # Butler GraphQL
 
