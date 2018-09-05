@@ -1,3 +1,7 @@
+![](https://travis-ci.org/glesys/butler-graphql.svg)
+![](https://poser.pugx.org/glesys/butler-graphql/v/stable.svg)
+![](https://poser.pugx.org/glesys/butler-graphql/license.svg)
+
 # Butler GraphQL
 
 Butler GraphQL is an opinionated package that makes it quick and easy to provide a GraphQL API using Laravel.
