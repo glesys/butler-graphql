@@ -1,6 +1,7 @@
-[![Build Status](https://travis-ci.org/glesys/butler-graphql.svg)](https://travis-ci.org/glesys/butler-graphql)
-[![Latest Stable Version](https://poser.pugx.org/glesys/butler-graphql/v/stable.svg)](https://packagist.org/packages/glesys/butler-graphql)
-[![License](https://poser.pugx.org/glesys/butler-graphql/license.svg)](LICENSE)
+[![Build Status](https://img.shields.io/travis/glesys/butler-graphql.svg)](https://travis-ci.org/glesys/butler-graphql)
+[![Packagist](https://img.shields.io/packagist/v/glesys/butler-graphql.svg)](https://packagist.org/packages/glesys/butler-graphql)
+[![License](https://img.shields.io/github/license/glesys/butler-graphql.svg)](LICENCE)
+
 
 # Butler GraphQL
 
