@@ -3,6 +3,10 @@
         {
             "name": "Christoffer Artmann",
             "email": "christoffer.artmann@glesys.se"
+        },
+        {
+            "name": "Christoffer Persson",
+            "email": "christoffer@glesys.se"
         }
     ],
     "autoload": {
@@ -11,6 +15,9 @@
         }
     },
     "autoload-dev": {
+        "classmap": [
+            "tests/stubs/"
+        ],
         "psr-4": {
             "Butler\\Graphql\\Tests\\": "tests/"
         }
@@ -20,18 +27,22 @@
     },
     "description": "An opinionated GraphQL package for Laravel",
     "extra": {
-        "laravel": [
-            "Butler\\Graphql\\ServiceProvider"
-        ]
+        "laravel": {
+            "providers": [
+                "Butler\\Graphql\\ServiceProvider"
+            ]
+        }
     },
     "license": "MIT",
     "name": "glesys/butler-graphql",
     "require": {
         "php": "^7.1",
         "illuminate/support": "^5.6",
+        "leinonen/php-dataloader": "^1.0",
         "webonyx/graphql-php": "^0.11.5"
     },
     "require-dev": {
+        "graham-campbell/testbench": "^5.1",
         "mockery/mockery": "^1.0",
         "phpunit/phpunit": "^7.0"
     },

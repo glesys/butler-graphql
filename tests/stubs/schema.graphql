@@ -1,0 +1,31 @@
+type Query {
+    testResolvers: [Thing]
+    dataLoader: [Thing]
+    throwException: String!
+    throwModelNotFoundException: String!
+    throwValidationException: String!
+}
+
+type Mutation {
+    testMutation(input: TestMutationInput): TestMutationPayload
+}
+
+input TestMutationInput {
+    message: String!
+}
+
+type TestMutationPayload {
+    message: String!
+}
+
+type Thing {
+    name: String!
+    typeField: String!
+    typeFieldWithClosure: String!
+    missingType: SubThing
+    dataLoaded: String!
+}
+
+type SubThing {
+    name: String!
+}
