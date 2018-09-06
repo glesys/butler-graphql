@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Implement error reporting of exceptions during requests.
 
 ## [1.0.0] - 2018-09-06
 

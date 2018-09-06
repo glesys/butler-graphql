@@ -3,7 +3,9 @@
 namespace Butler\Graphql\Tests;
 
 use GrahamCampbell\TestBenchCore\ServiceProviderTrait;
+use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Http\Request;
+use Mockery;
 
 class HandlesGraphqlRequestsTest extends AbstractTestCase
 {
@@ -102,6 +104,19 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
         $this->assertFalse(array_has($data, 'errors.0.trace'), 'trace should not be included');
         $this->assertSame('Internal server error', array_get($data, 'errors.0.message'));
         $this->assertSame('internal', array_get($data, 'errors.0.category'));
+    }
+
+    public function test_error_reporting()
+    {
+        $handler = Mockery::mock(ExceptionHandler::class);
+        $handler->shouldReceive('report')->once();
+
+        $this->app->instance(ExceptionHandler::class, $handler);
+
+        $controller = $this->app->make(GraphqlController::class);
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'query { throwException }'
+        ]));
     }
 
     public function test_error_with_debug_message()

@@ -11,6 +11,7 @@ use GraphQL\Executor\Promise\PromiseAdapter;
 use GraphQL\GraphQL;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Utils\BuildSchema;
+use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -19,24 +20,6 @@ use ReflectionException;
 
 trait HandlesGraphqlRequests
 {
-    /** @var \Butler\Graphql\DataLoader */
-    private $dataLoader;
-
-    /** @var \GraphQL\Executor\Promise\PromiseAdapter */
-    private $promiseAdapter;
-
-    /**
-     * Create a new instance.
-     *
-     * @param  \Butler\Graphql\DataLoader  $dataLoader
-     * @param  \GraphQL\Executor\Promise\PromiseAdapter  $promiseAdapter
-     */
-    public function __construct(DataLoader $dataLoader, PromiseAdapter $promiseAdapter)
-    {
-        $this->dataLoader = $dataLoader;
-        $this->promiseAdapter = $promiseAdapter;
-    }
-
     /**
      * Invoke the Graphql request handler.
      *
@@ -45,15 +28,16 @@ trait HandlesGraphqlRequests
      */
     public function __invoke(Request $request)
     {
+        $loader = app(DataLoader::class);
         $schema = BuildSchema::build(file_get_contents($this->schemaPath()));
         $result = null;
 
         GraphQL::promiseToExecute(
-            $this->promiseAdapter,
+            app(PromiseAdapter::class),
             $schema,
             $request->input('query'),
             null, // root
-            ['loader' => $this->dataLoader], // context
+            compact('loader'), // context
             $request->input('variables'),
             null, // operationName
             [$this, 'resolveField'],
@@ -62,7 +46,7 @@ trait HandlesGraphqlRequests
             $result = $value;
         });
 
-        $this->dataLoader->run();
+        $loader->run();
 
         $result->setErrorFormatter([$this, 'errorFormatter']);
 
@@ -74,15 +58,17 @@ trait HandlesGraphqlRequests
         $formattedError = FormattedError::createFromException($error);
         $exception = $error->getPrevious();
 
+        $this->reportException($exception);
+
         if ($exception instanceof ModelNotFoundException) {
-            $formattedError = array_merge($formattedError, [
+            return array_merge($formattedError, [
                 'message' => class_basename($exception->getModel()) . ' not found.',
                 'category' => 'client',
             ]);
         }
 
         if ($exception instanceof ValidationException) {
-            $formattedError = array_merge($formattedError, [
+            return array_merge($formattedError, [
                 'message' => $exception->getMessage(),
                 'category' => 'validation',
                 'validation' => $exception->errors(),
@@ -90,6 +76,11 @@ trait HandlesGraphqlRequests
         }
 
         return $formattedError;
+    }
+
+    public function reportException(Exception $exception)
+    {
+        app(ExceptionHandler::class)->report($exception);
     }
 
     public function schemaPath()
@@ -127,12 +118,13 @@ trait HandlesGraphqlRequests
         $methodName = $this->resolveMethodName($info);
 
         try {
-            $resolver = app()->make($className);
+            $resolver = app($className);
         } catch (ReflectionException $e) {
             // NOTE: It's OK if the class to reflect does not exist
+            $resolver = null;
         }
 
-        if (isset($resolver) && method_exists($resolver, $methodName)) {
+        if (method_exists($resolver, $methodName)) {
             return $resolver->{$methodName}($source, $args, $context, $info);
         }
     }
@@ -142,9 +134,7 @@ trait HandlesGraphqlRequests
         $propertyName = $this->propertyName($info);
 
         if (is_array($source) || $source instanceof \ArrayAccess) {
-            if (isset($source[$propertyName])) {
-                return $source[$propertyName];
-            }
+            return $source[$propertyName] ?? null;
         }
     }
 
@@ -153,9 +143,7 @@ trait HandlesGraphqlRequests
         $propertyName = $this->propertyName($info);
 
         if (is_object($source)) {
-            if (isset($source->{$propertyName})) {
-                return $source->{$propertyName};
-            }
+            return $source->{$propertyName} ?? null;
         }
     }
 
