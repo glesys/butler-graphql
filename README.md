@@ -61,9 +61,7 @@ class GraphqlController extends Controller
 5. Add a route for your GraphQL API endpoint.
 
 ```php
-
 $router->match(['get', 'post'], '/graphql', GraphqlController::class);
-
 ```
 
 6. Use something like [GraphiQL](https://github.com/graphql/graphiql) or [Insomnia](https://insomnia.rest/) to interact with your GraphQL API.
@@ -86,6 +84,17 @@ The following parameters are passed to all resolving methods:
  * @param  array  $context
  * @param  \GraphQL\Type\Definition\ResolveInfo  $info
  */
+```
+
+In addition to return arrayables and objects from the resolving methods you can also return callables that will be invoked with the same set of parameters.
+
+```php
+public function __invoke()
+{
+    return function ($root, $args, $context, $info) {
+        //
+    };
+}
 ```
 
 ### Mutations
