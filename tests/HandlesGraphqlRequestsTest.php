@@ -171,4 +171,17 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
         $this->assertSame('validation', array_get($data, 'errors.0.category'));
         $this->assertSame(['foo' => ['The foo field is required.']], array_get($data, 'errors.0.validation'));
     }
+
+    public function test_invalid_query()
+    {
+        $handler = Mockery::mock(ExceptionHandler::class);
+        $handler->shouldReceive('report')->once();
+
+        $this->app->instance(ExceptionHandler::class, $handler);
+
+        $controller = $this->app->make(GraphqlController::class);
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'hello world'
+        ]));
+    }
 }
