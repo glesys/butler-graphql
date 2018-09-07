@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Use `base_path()` instead of `app_path()` to ensure the default config works in Lumen.
+
 
 ## [1.1.1] - 2018-09-07
 
