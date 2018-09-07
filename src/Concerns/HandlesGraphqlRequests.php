@@ -58,7 +58,7 @@ trait HandlesGraphqlRequests
         $formattedError = FormattedError::createFromException($error);
         $exception = $error->getPrevious();
 
-        $this->reportException($exception);
+        $this->reportException($exception ?? $error);
 
         if ($exception instanceof ModelNotFoundException) {
             return array_merge($formattedError, [
