@@ -15,6 +15,8 @@ Butler GraphQL is an opinionated package that makes it quick and easy to provide
 composer require glesys/butler-graphql
 ```
 
+_NOTE:_ If you're using Laravel < 5.5 or Lumen you need to register `Butler\Graphql\ServiceProvider::class` manually.
+
 2. Create a GraphQL schema file. The default location is `app/Http/Graphql/schema.graphql`.
 
 ```graphql
