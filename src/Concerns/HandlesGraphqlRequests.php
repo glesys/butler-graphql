@@ -50,7 +50,7 @@ trait HandlesGraphqlRequests
 
         $result->setErrorFormatter([$this, 'errorFormatter']);
 
-        return $result->toArray($this->debugFlags());
+        return $this->decorateResponse($result->toArray($this->debugFlags()));
     }
 
     public function errorFormatter(GraphqlError $graphqlError)
@@ -196,5 +196,16 @@ trait HandlesGraphqlRequests
     public function typesNamespace(): string
     {
         return $this->namespace() . 'Types\\';
+    }
+
+    public function decorateResponse(array $data): array
+    {
+        if (
+            app()->bound('debugbar') &&
+            app('debugbar')->isEnabled()
+        ) {
+            $data['debug'] = app('debugbar')->getData();
+        }
+        return $data;
     }
 }

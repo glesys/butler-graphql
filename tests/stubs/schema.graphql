@@ -5,6 +5,7 @@ type Query {
     throwException: String!
     throwModelNotFoundException: String!
     throwValidationException: String!
+    ping: String!
 }
 
 type Mutation {

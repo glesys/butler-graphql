@@ -174,3 +174,22 @@ php artisan vendor:publish
 
 - `BUTLER_GRAPHQL_INCLUDE_DEBUG_MESSAGE` – Set to `true` to include the real error message in error responses. Defaults to `false`.
 - `BUTLER_GRAPHQL_INCLUDE_TRACE` – Set to `true` to include stack traces in error responses. Defaults to `false`.
+
+
+#### Debugbar
+
+This library has support for [laravel-debugbar](https://github.com/barryvdh/laravel-debugbar). Debug information such as
+executed queries and maximum memory usage will be displayed along with the data in each response, if the library is installed.
+
+To install and activate it, simply install `laravel-debugbar` as a dev dependency.
+
+```
+composer require barryvdh/laravel-debugbar --dev
+```
+
+If you application has debug-mode enabled (`APP_DEBUG` in the `.env`-file) the debug information will automatically be added
+to all responses.
+
+Customizing what data is collected and displayed in the responses is easily done by copying the
+[default config file](https://github.com/barryvdh/laravel-debugbar/blob/master/config/debugbar.php) to your
+own applications config directory and adjusting as needed.

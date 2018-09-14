@@ -7,6 +7,10 @@
         {
             "name": "Christoffer Persson",
             "email": "christoffer@glesys.se"
+        },
+        {
+            "name": "Emil Andersson",
+            "email": "emil@glesys.se"
         }
     ],
     "autoload": {
@@ -45,6 +49,9 @@
         "graham-campbell/testbench": "^5.1",
         "mockery/mockery": "^1.0",
         "phpunit/phpunit": "^7.0"
+    },
+    "suggest": {
+        "barryvdh/laravel-debugbar": "View debug information in responses."
     },
     "type": "library"
 }

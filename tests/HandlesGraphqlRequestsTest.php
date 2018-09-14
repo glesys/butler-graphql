@@ -197,4 +197,39 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
             'query' => 'hello world'
         ]));
     }
+
+    public function test_without_debugbar()
+    {
+        $controller = $this->app->make(GraphqlController::class);
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'query { ping }',
+        ]));
+        $this->assertSame(['data' => ['ping' => 'pong']], $data);
+    }
+
+    public function test_with_debugbar()
+    {
+        $debugBar = Mockery::mock(\stdClass::class);
+        $debugBar->shouldReceive('isEnabled')->once()->andReturnTrue();
+        $debugBar->shouldReceive('getData')->once()->andReturn(['queries' => 10]);
+
+        $this->app->instance('debugbar', $debugBar);
+
+        $controller = $this->app->make(GraphqlController::class);
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'query { ping }',
+        ]));
+
+        $this->assertSame(
+            [
+                'data' => [
+                    'ping' => 'pong',
+                ],
+                'debug' => [
+                    'queries' => 10,
+                ]
+            ],
+            $data
+        );
+    }
 }
