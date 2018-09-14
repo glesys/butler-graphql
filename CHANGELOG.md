@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Upgrade webonyx/graphql-php@0.12.6 for improved schema language support.
+
 
 ## [1.1.2] - 2018-09-07
 
