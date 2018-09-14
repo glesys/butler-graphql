@@ -177,7 +177,7 @@ php artisan vendor:publish
 
 #### Debugbar
 
-Butler GraphQL has support for automatically decorating responses with additional debug information then using [laravel-debugbar](https://github.com/barryvdh/laravel-debugbar). Details such as database queries and memory usage will automatically be available in the response _if barryvdh/laravel-debugbar is installed_.
+Butler GraphQL has support for automatically decorating responses with additional debug information when using [laravel-debugbar](https://github.com/barryvdh/laravel-debugbar). Details such as database queries and memory usage will automatically be available in the response _if barryvdh/laravel-debugbar is installed_.
 
 To install and activate it, simply install `barryvdh/laravel-debugbar` as a `require-dev` dependency.
 
@@ -185,6 +185,6 @@ To install and activate it, simply install `barryvdh/laravel-debugbar` as a `req
 composer require barryvdh/laravel-debugbar --dev
 ```
 
-And ensure that `APP_DEBUG` is set to `true`, that's it.
+When installed, make sure that `APP_DEBUG` is set to `true`, that's it.
 
 Customizing what data to collect and include in the response is easily done by copying the [default config file](https://github.com/barryvdh/laravel-debugbar/blob/master/config/debugbar.php) to `config/debugbar.php` and adjust as needed.
