@@ -174,3 +174,17 @@ php artisan vendor:publish
 
 - `BUTLER_GRAPHQL_INCLUDE_DEBUG_MESSAGE` – Set to `true` to include the real error message in error responses. Defaults to `false`.
 - `BUTLER_GRAPHQL_INCLUDE_TRACE` – Set to `true` to include stack traces in error responses. Defaults to `false`.
+
+#### Debugbar
+
+Butler GraphQL has support for automatically decorating responses with additional debug information when using [laravel-debugbar](https://github.com/barryvdh/laravel-debugbar). Details such as database queries and memory usage will automatically be available in the response _if barryvdh/laravel-debugbar is installed_.
+
+To install and activate it, simply install `barryvdh/laravel-debugbar` as a `require-dev` dependency.
+
+```
+composer require barryvdh/laravel-debugbar --dev
+```
+
+When installed, make sure that `APP_DEBUG` is set to `true`, that's it.
+
+Customizing what data to collect and include in the response is easily done by copying the [default config file](https://github.com/barryvdh/laravel-debugbar/blob/master/config/debugbar.php) to `config/debugbar.php` and adjust as needed.
