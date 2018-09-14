@@ -5,7 +5,7 @@ namespace Butler\Graphql\Concerns;
 use Butler\Graphql\DataLoader;
 use Exception;
 use GraphQL\Error\Debug;
-use GraphQL\Error\Error;
+use GraphQL\Error\Error as GraphqlError;
 use GraphQL\Error\FormattedError;
 use GraphQL\Executor\Promise\PromiseAdapter;
 use GraphQL\GraphQL;
@@ -53,25 +53,29 @@ trait HandlesGraphqlRequests
         return $result->toArray($this->debugFlags());
     }
 
-    public function errorFormatter(Error $error)
+    public function errorFormatter(GraphqlError $graphqlError)
     {
-        $formattedError = FormattedError::createFromException($error);
-        $exception = $error->getPrevious();
+        $formattedError = FormattedError::createFromException($graphqlError);
+        $throwable = $graphqlError->getPrevious();
 
-        $this->reportException($exception ?? $error);
+        $this->reportException(
+            $throwable instanceof Exception
+            ? $throwable
+            : $graphqlError
+        );
 
-        if ($exception instanceof ModelNotFoundException) {
+        if ($throwable instanceof ModelNotFoundException) {
             return array_merge($formattedError, [
-                'message' => class_basename($exception->getModel()) . ' not found.',
+                'message' => class_basename($throwable->getModel()) . ' not found.',
                 'category' => 'client',
             ]);
         }
 
-        if ($exception instanceof ValidationException) {
+        if ($throwable instanceof ValidationException) {
             return array_merge($formattedError, [
-                'message' => $exception->getMessage(),
+                'message' => $throwable->getMessage(),
                 'category' => 'validation',
-                'validation' => $exception->errors(),
+                'validation' => $throwable->errors(),
             ]);
         }
 
