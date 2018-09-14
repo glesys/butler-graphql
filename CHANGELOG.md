@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [1.2.0] - 2018-09-14
+
 ### Added
 - Decorate the response with debug information when using [barryvdh/laravel-debugbar](https://github.com/barryvdh/laravel-debugbar).
 
