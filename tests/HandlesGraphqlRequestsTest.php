@@ -106,7 +106,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
         $this->assertSame('internal', array_get($data, 'errors.0.category'));
     }
 
-    public function test_error_reporting()
+    public function test_error_reporting_with_exception()
     {
         $handler = Mockery::mock(ExceptionHandler::class);
         $handler->shouldReceive('report')->once();
@@ -116,6 +116,19 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
         $controller = $this->app->make(GraphqlController::class);
         $data = $controller(Request::create('/', 'POST', [
             'query' => 'query { throwException }'
+        ]));
+    }
+
+    public function test_error_reporting_with_php_error()
+    {
+        $handler = Mockery::mock(ExceptionHandler::class);
+        $handler->shouldReceive('report')->once();
+
+        $this->app->instance(ExceptionHandler::class, $handler);
+
+        $controller = $this->app->make(GraphqlController::class);
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'query { throwError }'
         ]));
     }
 

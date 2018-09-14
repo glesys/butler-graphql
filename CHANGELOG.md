@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Upgrade webonyx/graphql-php@0.12.6 for improved schema language support.
 
+### Fixed
+- The code in `HandlesGraphqlRequests->errorFormatter()` always assumed `\Exception` from `\GraphQL\Error\Error->getPrevious()` when it fact it returns `\Throwable`. We now ensure that we always pass `\Exception` to `ExceptionHandler->report()`.
+
 
 ## [1.1.2] - 2018-09-07
 

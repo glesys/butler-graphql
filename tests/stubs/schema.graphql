@@ -1,6 +1,7 @@
 type Query {
     testResolvers: [Thing]
     dataLoader: [Thing]
+    throwError: String!
     throwException: String!
     throwModelNotFoundException: String!
     throwValidationException: String!
