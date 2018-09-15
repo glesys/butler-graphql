@@ -30,7 +30,7 @@ type Signup {
 }
 ```
 
-3. Create a resolver for the `pendingSigups` query.
+3. Create a resolver for the `pendingSignups` query.
 
 ```php
 <?php
