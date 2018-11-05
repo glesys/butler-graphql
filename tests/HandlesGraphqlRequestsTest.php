@@ -232,4 +232,17 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
             $data
         );
     }
+
+    public function test_fieldFromResolver_doesnt_swallow_errors()
+    {
+        $this->app->config->set('butler.graphql.include_debug_message', true);
+        $this->app->config->set('butler.graphql.include_trace', true);
+
+        $controller = $this->app->make(GraphqlController::class);
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'query { nonExistingClassDependency }'
+        ]));
+
+        $this->assertSame("Class Butler\Graphql\Tests\Queries\NonExistingClass does not exist", data_get($data, 'errors.0.debugMessage'));
+    }
 }
