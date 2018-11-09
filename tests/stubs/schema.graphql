@@ -6,6 +6,7 @@ type Query {
     throwModelNotFoundException: String!
     throwValidationException: String!
     ping: String!
+    nonExistingClassDependency: String!
 }
 
 type Mutation {

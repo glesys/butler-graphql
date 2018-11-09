@@ -16,7 +16,6 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-use ReflectionException;
 
 trait HandlesGraphqlRequests
 {
@@ -121,15 +120,11 @@ trait HandlesGraphqlRequests
         $className = $this->resolveClassName($info);
         $methodName = $this->resolveMethodName($info);
 
-        try {
+        if (app()->has($className) || class_exists($className)) {
             $resolver = app($className);
-        } catch (ReflectionException $e) {
-            // NOTE: It's OK if the class to reflect does not exist
-            $resolver = null;
-        }
-
-        if (method_exists($resolver, $methodName)) {
-            return $resolver->{$methodName}($source, $args, $context, $info);
+            if (method_exists($resolver, $methodName)) {
+                return $resolver->{$methodName}($source, $args, $context, $info);
+            }
         }
     }
 
