@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Stop catching Exceptions in `HandlesGraphqlRequests->fieldFromResolver` to avoid intercepting Exceptions from the service container.
+- Pass `operationName` from the request to `GraphQL::promiseToExecute`.
 
 ## [1.2.0] - 2018-09-14
 
