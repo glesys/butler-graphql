@@ -38,7 +38,7 @@ trait HandlesGraphqlRequests
             null, // root
             compact('loader'), // context
             $request->input('variables'),
-            null, // operationName
+            $request->input('operationName'),
             [$this, 'resolveField'],
             null // validationRules
         )->then(function ($value) use (&$result) {

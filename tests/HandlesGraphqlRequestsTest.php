@@ -2,7 +2,6 @@
 
 namespace Butler\Graphql\Tests;
 
-use GrahamCampbell\TestBenchCore\ServiceProviderTrait;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Http\Request;
 use Mockery;
@@ -244,5 +243,23 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
         ]));
 
         $this->assertSame("Class Butler\Graphql\Tests\Queries\NonExistingClass does not exist", data_get($data, 'errors.0.debugMessage'));
+    }
+
+    public function test_operationName()
+    {
+       $controller = $this->app->make(GraphqlController::class);
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'query query1 { testResolvers { name } } query pingpong { ping }',
+            'operationName' => 'pingpong',
+        ]));
+
+        $this->assertSame(
+            [
+                'data' => [
+                    'ping' => 'pong',
+                ],
+            ],
+            $data
+        );
     }
 }
