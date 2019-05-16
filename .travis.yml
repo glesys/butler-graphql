@@ -53,3 +53,4 @@ install:
 
 script:
   - vendor/bin/phpunit
+  - vendor/bin/phpcs
