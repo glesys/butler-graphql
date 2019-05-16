@@ -33,6 +33,8 @@ trait HandlesGraphqlRequests
         $schema = BuildSchema::build(file_get_contents($this->schemaPath()), [$this, 'decorateTypeConfig']);
         $result = null;
 
+        GraphQL::useExperimentalExecutor();
+
         GraphQL::promiseToExecute(
             app(PromiseAdapter::class),
             $schema,
@@ -68,15 +70,19 @@ trait HandlesGraphqlRequests
         if ($throwable instanceof ModelNotFoundException) {
             return array_merge($formattedError, [
                 'message' => class_basename($throwable->getModel()) . ' not found.',
-                'category' => 'client',
+                'extensions' => [
+                    'category' => 'client',
+                ],
             ]);
         }
 
         if ($throwable instanceof ValidationException) {
             return array_merge($formattedError, [
                 'message' => $throwable->getMessage(),
-                'category' => 'validation',
-                'validation' => $throwable->errors(),
+                'extensions' => [
+                    'category' => 'validation',
+                    'validation' => $throwable->errors(),
+                ],
             ]);
         }
 

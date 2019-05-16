@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Interface support 🎉. Types are resolved using `$source['__typename']`, `$source->__typename`, `Parent@resolveTypeForField()` (`Query@resolveType` for queries and mutations) or class base name.
 
+### Changed
+- **BREAKING**: Upgrade to webonyx/graphql-php@0.13.4 for improved performance and specification compliance. The `category` and `validation` keys previously available next to `message` in errors has now been moved to the `extensions` part of errors as per the [June 2018 GraphQL specification](https://graphql.github.io/graphql-spec/June2018/#sec-Errors).
+
 
 ## [1.2.1] - 2018-11-21
 
