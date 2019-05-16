@@ -26,4 +26,11 @@ class Thing
             return 'typeFieldWithClosure value';
         };
     }
+
+    public function resolveTypeForAttachment($source, $context, ResolveInfo $info)
+    {
+        if (is_array($source) && $source['name'] === 'Attachment 1') {
+            return 'Photo';
+        }
+    }
 }

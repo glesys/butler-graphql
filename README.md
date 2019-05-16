@@ -130,6 +130,85 @@ class Signup
 
 *NOTE:* If a field name in your GraphQL schema definition match the key (for arrayables) or property (for objects) of your source object, you don't need to define a resolver method for that field.
 
+### Interfaces
+
+Butler GraphQL supports the use of interfaces in your schema but needs a little bit of help to be able to know what type to use for resolving fields.
+
+The easiest way to tell Butler GraphQL what type to use is to provide a `__typename` key or property in your data. For example:
+
+```php
+<?php
+
+namespace App\Http\Graphql\Types;
+
+class Post
+{
+    public function attachment($source, $args, $context, $info)
+    {
+        return [
+            '__typename' => 'Photo',
+            'height' => 200,
+            'width' => 300,
+        ];
+    }
+}
+```
+
+You can also use the `resolveTypeFor[Field]` in your parent's resolver to dynamically decide what type to use:
+
+```php
+<?php
+
+namespace App\Http\Graphql\Types;
+
+class Post
+{
+    public function attachment($source, $args, $context, $info)
+    {
+        return [
+            'height' => 200,
+            'width' => 300,
+        ];
+    }
+
+    public function resolveTypeForAttachment($source, $context, $info)
+    {
+        if (isset($source['height'], $source['width'])) {
+            return 'Photo';
+        }
+        if (isset($source['length'])) {
+            return 'Video';
+        }
+    }
+}
+```
+
+For queries and mutations you only have to define a `resolveType` method:
+
+```php
+<?php
+
+namespace App\Http\Graphql\Queries;
+
+use App\Attachment;
+
+class Attachments
+{
+    public function __invoke($source, $args, $context, $info)
+    {
+        return Attachment::all();
+    }
+
+    public function resolveType($source, $context, $info)
+    {
+        return $source->type; // `Photo` or `Video`
+    }
+}
+```
+
+If none of the above are available Butler GraphQL will resort to the base class name of the data if it's an object.
+
+
 ### N+1 and the Data Loader
 
 Butler GraphQL includes a simple data loader to prevent n+1 issues when loading nested data. It's available in `$context['loader']` and really easy to use:

@@ -9,6 +9,8 @@ use GraphQL\Error\Error as GraphqlError;
 use GraphQL\Error\FormattedError;
 use GraphQL\Executor\Promise\PromiseAdapter;
 use GraphQL\GraphQL;
+use GraphQL\Language\AST\TypeDefinitionNode;
+use GraphQL\Language\AST\InterfaceTypeDefinitionNode;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Utils\BuildSchema;
 use Illuminate\Contracts\Debug\ExceptionHandler;
@@ -28,7 +30,7 @@ trait HandlesGraphqlRequests
     public function __invoke(Request $request)
     {
         $loader = app(DataLoader::class);
-        $schema = BuildSchema::build(file_get_contents($this->schemaPath()));
+        $schema = BuildSchema::build(file_get_contents($this->schemaPath()), [$this, 'decorateTypeConfig']);
         $result = null;
 
         GraphQL::promiseToExecute(
@@ -91,6 +93,14 @@ trait HandlesGraphqlRequests
         return config('butler.graphql.schema');
     }
 
+    public function decorateTypeConfig(array $config, TypeDefinitionNode $typeDefinitionNode)
+    {
+        if ($typeDefinitionNode instanceof InterfaceTypeDefinitionNode) {
+            $config['resolveType'] = [$this, 'resolveType'];
+        }
+        return $config;
+    }
+
     public function debugFlags()
     {
         $flags = 0;
@@ -115,10 +125,18 @@ trait HandlesGraphqlRequests
             : $field;
     }
 
+    public function resolveType($source, $context, ResolveInfo $info)
+    {
+        return $this->typeFromArray($source, $context, $info)
+            ?? $this->typeFromObject($source, $context, $info)
+            ?? $this->typeFromParentResolver($source, $context, $info)
+            ?? $this->typeFromBaseClass($source, $context, $info);
+    }
+
     public function fieldFromResolver($source, $args, $context, ResolveInfo $info)
     {
         $className = $this->resolveClassName($info);
-        $methodName = $this->resolveMethodName($info);
+        $methodName = $this->resolveFieldMethodName($info);
 
         if (app()->has($className) || class_exists($className)) {
             $resolver = app($className);
@@ -146,6 +164,40 @@ trait HandlesGraphqlRequests
         }
     }
 
+    public function typeFromArray($source, $context, ResolveInfo $info)
+    {
+        if (is_array($source) || $source instanceof \ArrayAccess) {
+            return $source['__typename'] ?? null;
+        }
+    }
+
+    public function typeFromObject($source, $context, ResolveInfo $info)
+    {
+        if (is_object($source)) {
+            return $source->__typename ?? null;
+        }
+    }
+
+    public function typeFromParentResolver($source, $context, ResolveInfo $info)
+    {
+        $className = $this->resolveClassName($info);
+        $methodName = $this->resolveTypeMethodName($info);
+
+        if (app()->has($className) || class_exists($className)) {
+            $resolver = app($className);
+            if (method_exists($resolver, $methodName)) {
+                return $resolver->{$methodName}($source, $context, $info);
+            }
+        }
+    }
+
+    public function typeFromBaseClass($source, $context, ResolveInfo $info)
+    {
+        if (is_object($source)) {
+            return class_basename($source);
+        }
+    }
+
     public function propertyName(ResolveInfo $info): string
     {
         return Str::snake($info->fieldName);
@@ -164,13 +216,22 @@ trait HandlesGraphqlRequests
         return $this->typesNamespace() . Str::studly($info->parentType->name);
     }
 
-    public function resolveMethodName(ResolveInfo $info): string
+    public function resolveFieldMethodName(ResolveInfo $info): string
     {
         if (in_array($info->parentType->name, ['Query', 'Mutation'])) {
             return '__invoke';
         }
 
         return Str::camel($info->fieldName);
+    }
+
+    public function resolveTypeMethodName(ResolveInfo $info): string
+    {
+        if (in_array($info->parentType->name, ['Query', 'Mutation'])) {
+            return 'resolveType';
+        }
+
+        return 'resolveTypeFor' . ucfirst(Str::camel($info->fieldName));
     }
 
     public function namespace(): string
