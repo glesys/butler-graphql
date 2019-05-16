@@ -7,6 +7,8 @@ type Query {
     throwValidationException: String!
     ping: String!
     nonExistingClassDependency: String!
+    resolveInterfaceFromQuery: [Attachment!]!
+    resolveInterfaceFromType: Thing!
 }
 
 type Mutation {
@@ -27,8 +29,27 @@ type Thing {
     typeFieldWithClosure: String!
     missingType: SubThing
     dataLoaded: String!
+    attachment: Attachment
 }
 
 type SubThing {
     name: String!
+}
+
+interface Attachment {
+    name: String!
+    size: Int!
+}
+
+type Photo implements Attachment {
+    name: String!
+    size: Int!
+    height: Int!
+    width: Int!
+}
+
+type Video implements Attachment {
+    name: String!
+    size: Int!
+    length: Int!
 }

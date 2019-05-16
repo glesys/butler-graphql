@@ -262,4 +262,92 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
             $data
         );
     }
+
+    public function test_resolve_interface_from_query()
+    {
+        $controller = $this->app->make(GraphqlController::class);
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'query {
+                resolveInterfaceFromQuery {
+                    __typename
+                    name
+                    size
+                    ... on Photo {
+                        height
+                        width
+                    }
+                    ... on Video {
+                        length
+                    }
+                }
+            }'
+        ]));
+
+        $this->assertSame(
+            [
+                'data' => [
+                    'resolveInterfaceFromQuery' => [
+                        [
+                            '__typename' => 'Photo',
+                            'name' => 'Attachment 1',
+                            'size' => 256,
+                            'height' => 100,
+                            'width' => 200,
+                        ],
+                        [
+                            '__typename' => 'Video',
+                            'name' => 'Attachment 2',
+                            'size' => 1024,
+                            'length' => 3600,
+                        ],
+                        [
+                            '__typename' => 'Photo',
+                            'name' => 'Attachment 3',
+                            'size' => 512,
+                            'height' => 100,
+                            'width' => 200,
+                        ],
+                        [
+                            '__typename' => 'Video',
+                            'name' => 'Attachment 4',
+                            'size' => 2048,
+                            'length' => 7200,
+                        ],
+                    ],
+                ],
+            ],
+            $data
+        );
+    }
+
+    public function test_resolve_interface_from_type()
+    {
+        $controller = $this->app->make(GraphqlController::class);
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'query {
+                resolveInterfaceFromType {
+                    name
+                    attachment {
+                        __typename
+                        name
+                    }
+                }
+            }'
+        ]));
+
+        $this->assertSame(
+            [
+                'data' => [
+                    'resolveInterfaceFromType' => [
+                        'name' => 'Thing 1',
+                        'attachment' => [
+                            '__typename' => 'Photo',
+                            'name' => 'Attachment 1',
+                        ],
+                    ],
+                ],
+            ],
+            $data
+        );
+    }
 }
