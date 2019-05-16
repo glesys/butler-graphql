@@ -115,7 +115,6 @@ trait HandlesGraphqlRequests
 
     public function resolveField($source, $args, $context, ResolveInfo $info)
     {
-
         $field = $this->fieldFromResolver($source, $args, $context, $info)
             ?? $this->fieldFromArray($source, $args, $context, $info)
             ?? $this->fieldFromObject($source, $args, $context, $info);
@@ -256,10 +255,7 @@ trait HandlesGraphqlRequests
 
     public function decorateResponse(array $data): array
     {
-        if (
-            app()->bound('debugbar') &&
-            app('debugbar')->isEnabled()
-        ) {
+        if (app()->bound('debugbar') && app('debugbar')->isEnabled()) {
             $data['debug'] = app('debugbar')->getData();
         }
         return $data;

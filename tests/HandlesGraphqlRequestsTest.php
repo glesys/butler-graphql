@@ -247,7 +247,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
 
     public function test_operationName()
     {
-       $controller = $this->app->make(GraphqlController::class);
+        $controller = $this->app->make(GraphqlController::class);
         $data = $controller(Request::create('/', 'POST', [
             'query' => 'query query1 { testResolvers { name } } query pingpong { ping }',
             'operationName' => 'pingpong',

@@ -48,7 +48,8 @@
     "require-dev": {
         "graham-campbell/testbench": "^5.2",
         "mockery/mockery": "^1.0",
-        "phpunit/phpunit": "^7.0|^8.0"
+        "phpunit/phpunit": "^7.0|^8.0",
+        "squizlabs/php_codesniffer": "^3.4"
     },
     "suggest": {
         "barryvdh/laravel-debugbar": "View debug information in responses."
