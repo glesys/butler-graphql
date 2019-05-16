@@ -8,7 +8,7 @@ use Mockery;
 
 class HandlesGraphqlRequestsTest extends AbstractTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

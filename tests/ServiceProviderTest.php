@@ -39,6 +39,6 @@ class ServiceProviderTest extends AbstractTestCase
     public function test_schema_config()
     {
         $schema = $this->app->config->get('butler.graphql.schema');
-        $this->assertContains('/app/Http/Graphql/schema.graphql', $schema);
+        $this->assertStringContainsString('/app/Http/Graphql/schema.graphql', $schema);
     }
 }
