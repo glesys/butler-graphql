@@ -9,6 +9,7 @@ type Query {
     nonExistingClassDependency: String!
     resolveInterfaceFromQuery: [Attachment!]!
     resolveInterfaceFromType: Thing!
+    variousCasing: [VariousCasing!]!
 }
 
 type Mutation {
@@ -52,4 +53,10 @@ type Video implements Attachment {
     name: String!
     size: Int!
     length: Int!
+}
+
+type VariousCasing {
+    name: String!
+    camelCase: String!
+    snake_case: String!
 }

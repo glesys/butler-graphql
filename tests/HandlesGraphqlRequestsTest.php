@@ -350,4 +350,45 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
             $data
         );
     }
+
+    public function test_various_casing()
+    {
+        $this->app->config->set('butler.graphql.include_debug_message', true);
+
+        $controller = $this->app->make(GraphqlController::class);
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'query {
+                variousCasing {
+                    name
+                    camelCase
+                    snake_case
+                }
+            }'
+        ]));
+
+        $this->assertSame(
+            [
+                'data' => [
+                    'variousCasing' => [
+                        [
+                            'name' => 'Test 1',
+                            'camelCase' => 'using camelCase',
+                            'snake_case' => 'using snakeCase',
+                        ],
+                        [
+                            'name' => 'Test 2',
+                            'camelCase' => 'using camel_case',
+                            'snake_case' => 'using snake_case',
+                        ],
+                        [
+                            'name' => 'Test 3',
+                            'camelCase' => 'using camel-case',
+                            'snake_case' => 'using snake-case',
+                        ],
+                    ],
+                ],
+            ],
+            $data
+        );
+    }
 }

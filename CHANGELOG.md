@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - **BREAKING**: Upgrade to webonyx/graphql-php@0.13.4 for improved performance and specification compliance. The `category` and `validation` keys previously available next to `message` in errors has now been moved to the `extensions` part of errors as per the [June 2018 GraphQL specification](https://graphql.github.io/graphql-spec/June2018/#sec-Errors).
-
+- **BREAKING**: Support for various casing from source data. Previously Butler GraphQL assumed `snake_case` for source data attributes when resolving fields (to mimic the Eloquent standard). This has now been extended to support `snake_case`, `camelCase` and `kebab-case` by default. To change this behaviour you can override the `propertyNames(ResolveInfo $info): array` method in your GraphQL controller. The old `propertyName(ResolveInfo $info): string` method has been removed.
 
 ## [1.2.1] - 2018-11-21
 
