@@ -102,7 +102,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
         $this->assertFalse(array_has($data, 'errors.0.debugMessage'), 'debugMessage should not be included');
         $this->assertFalse(array_has($data, 'errors.0.trace'), 'trace should not be included');
         $this->assertSame('Internal server error', array_get($data, 'errors.0.message'));
-        $this->assertSame('internal', array_get($data, 'errors.0.category'));
+        $this->assertSame('internal', array_get($data, 'errors.0.extensions.category'));
     }
 
     public function test_error_reporting_with_exception()
@@ -143,7 +143,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
         $this->assertFalse(array_has($data, 'errors.0.trace'), 'trace should not be included');
         $this->assertSame('An error occured', array_get($data, 'errors.0.debugMessage'));
         $this->assertSame('Internal server error', array_get($data, 'errors.0.message'));
-        $this->assertSame('internal', array_get($data, 'errors.0.category'));
+        $this->assertSame('internal', array_get($data, 'errors.0.extensions.category'));
     }
 
     public function test_error_with_trace()
@@ -158,7 +158,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
         $this->assertFalse(array_has($data, 'errors.0.debugMessage'), 'debugMessage should not be included');
         $this->assertGreaterThan(10, array_get($data, 'errors.0.trace'));
         $this->assertSame('Internal server error', array_get($data, 'errors.0.message'));
-        $this->assertSame('internal', array_get($data, 'errors.0.category'));
+        $this->assertSame('internal', array_get($data, 'errors.0.extensions.category'));
     }
 
     public function test_model_not_found_error()
@@ -169,7 +169,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
         ]));
 
         $this->assertSame('Dummy not found.', array_get($data, 'errors.0.message'));
-        $this->assertSame('client', array_get($data, 'errors.0.category'));
+        $this->assertSame('client', array_get($data, 'errors.0.extensions.category'));
     }
 
     public function test_validation_error()
@@ -180,8 +180,8 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
         ]));
 
         $this->assertSame('The given data was invalid.', array_get($data, 'errors.0.message'));
-        $this->assertSame('validation', array_get($data, 'errors.0.category'));
-        $this->assertSame(['foo' => ['The foo field is required.']], array_get($data, 'errors.0.validation'));
+        $this->assertSame('validation', array_get($data, 'errors.0.extensions.category'));
+        $this->assertSame(['foo' => ['The foo field is required.']], array_get($data, 'errors.0.extensions.validation'));
     }
 
     public function test_invalid_query()
