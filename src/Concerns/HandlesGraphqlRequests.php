@@ -153,19 +153,25 @@ trait HandlesGraphqlRequests
 
     public function fieldFromArray($source, $args, $context, ResolveInfo $info)
     {
-        $propertyName = $this->propertyName($info);
-
         if (is_array($source) || $source instanceof \ArrayAccess) {
-            return $source[$propertyName] ?? null;
+            return collect($this->propertyNames($info))
+                ->map(function ($propertyName) use ($source) {
+                    return $source[$propertyName] ?? null;
+                })
+                ->filter()
+                ->first();
         }
     }
 
     public function fieldFromObject($source, $args, $context, ResolveInfo $info)
     {
-        $propertyName = $this->propertyName($info);
-
         if (is_object($source)) {
-            return $source->{$propertyName} ?? null;
+            return collect($this->propertyNames($info))
+                ->map(function ($propertyName) use ($source) {
+                    return $source->{$propertyName} ?? null;
+                })
+                ->filter()
+                ->first();
         }
     }
 
@@ -203,9 +209,13 @@ trait HandlesGraphqlRequests
         }
     }
 
-    public function propertyName(ResolveInfo $info): string
+    public function propertyNames(ResolveInfo $info): array
     {
-        return Str::snake($info->fieldName);
+        return collect([
+            Str::snake($info->fieldName),
+            Str::camel($info->fieldName),
+            Str::kebab(Str::camel($info->fieldName)),
+        ])->unique()->toArray();
     }
 
     protected function resolveClassName(ResolveInfo $info): string
