@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- When resolving `Boolean` values from arrays or objects `false` was incorrectly filtered out, resulting in a `null` value instead.
+
 
 ## [2.0.0] - 2019-05-17
 

@@ -158,7 +158,9 @@ trait HandlesGraphqlRequests
                 ->map(function ($propertyName) use ($source) {
                     return $source[$propertyName] ?? null;
                 })
-                ->filter()
+                ->reject(function ($value) {
+                    return is_null($value);
+                })
                 ->first();
         }
     }
@@ -170,7 +172,9 @@ trait HandlesGraphqlRequests
                 ->map(function ($propertyName) use ($source) {
                     return $source->{$propertyName} ?? null;
                 })
-                ->filter()
+                ->reject(function ($value) {
+                    return is_null($value);
+                })
                 ->first();
         }
     }

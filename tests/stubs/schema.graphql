@@ -10,6 +10,7 @@ type Query {
     resolveInterfaceFromQuery: [Attachment!]!
     resolveInterfaceFromType: Thing!
     variousCasing: [VariousCasing!]!
+    resolvesFalseCorrectly: [AnotherThing!]!
 }
 
 type Mutation {
@@ -35,6 +36,11 @@ type Thing {
 
 type SubThing {
     name: String!
+}
+
+type AnotherThing {
+    id: ID!
+    requiredFlag: Boolean!
 }
 
 interface Attachment {
