@@ -351,6 +351,33 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
         );
     }
 
+    public function test_resolves_false_correctly()
+    {
+        $controller = $this->app->make(GraphqlController::class);
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'query {
+                resolvesFalseCorrectly {
+                    id
+                    requiredFlag
+                }
+            }'
+        ]));
+
+        $this->assertSame(
+            [
+                'data' => [
+                    'resolvesFalseCorrectly' => [
+                        ['id' => '1', 'requiredFlag' => true],
+                        ['id' => '2', 'requiredFlag' => false],
+                        ['id' => '3', 'requiredFlag' => true],
+                        ['id' => '4', 'requiredFlag' => false],
+                    ],
+                ],
+            ],
+            $data
+        );
+    }
+
     public function test_various_casing()
     {
         $this->app->config->set('butler.graphql.include_debug_message', true);
