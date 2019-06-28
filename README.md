@@ -226,7 +226,7 @@ class Article
     {
         return $context['loader'](function ($articleIds) {
             $comments = Comment::whereIn('article_id', $articleIds)->get();
-            return collect($articleIds)->map(function ($articleId) use ($comments)) {
+            return collect($articleIds)->map(function ($articleId) use ($comments) {
                 return $comments->where('article_id', $articleId);
             });
         })->load($source->id);
