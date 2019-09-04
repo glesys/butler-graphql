@@ -4,6 +4,7 @@ namespace Butler\Graphql\Tests;
 
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Mockery;
 
 class HandlesGraphqlRequestsTest extends AbstractTestCase
@@ -69,7 +70,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
             ],
         ]));
 
-        $this->assertSame('Hello World!', array_get($data, 'data.testMutation.message'));
+        $this->assertSame('Hello World!', Arr::get($data, 'data.testMutation.message'));
     }
 
     public function test_data_loader()
@@ -99,10 +100,10 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
             'query' => 'query { throwException }'
         ]));
 
-        $this->assertFalse(array_has($data, 'errors.0.debugMessage'), 'debugMessage should not be included');
-        $this->assertFalse(array_has($data, 'errors.0.trace'), 'trace should not be included');
-        $this->assertSame('Internal server error', array_get($data, 'errors.0.message'));
-        $this->assertSame('internal', array_get($data, 'errors.0.extensions.category'));
+        $this->assertFalse(Arr::has($data, 'errors.0.debugMessage'), 'debugMessage should not be included');
+        $this->assertFalse(Arr::has($data, 'errors.0.trace'), 'trace should not be included');
+        $this->assertSame('Internal server error', Arr::get($data, 'errors.0.message'));
+        $this->assertSame('internal', Arr::get($data, 'errors.0.extensions.category'));
     }
 
     public function test_error_reporting_with_exception()
@@ -140,10 +141,10 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
             'query' => 'query { throwException }'
         ]));
 
-        $this->assertFalse(array_has($data, 'errors.0.trace'), 'trace should not be included');
-        $this->assertSame('An error occured', array_get($data, 'errors.0.debugMessage'));
-        $this->assertSame('Internal server error', array_get($data, 'errors.0.message'));
-        $this->assertSame('internal', array_get($data, 'errors.0.extensions.category'));
+        $this->assertFalse(Arr::has($data, 'errors.0.trace'), 'trace should not be included');
+        $this->assertSame('An error occured', Arr::get($data, 'errors.0.debugMessage'));
+        $this->assertSame('Internal server error', Arr::get($data, 'errors.0.message'));
+        $this->assertSame('internal', Arr::get($data, 'errors.0.extensions.category'));
     }
 
     public function test_error_with_trace()
@@ -155,10 +156,10 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
             'query' => 'query { throwException }'
         ]));
 
-        $this->assertFalse(array_has($data, 'errors.0.debugMessage'), 'debugMessage should not be included');
-        $this->assertGreaterThan(10, array_get($data, 'errors.0.trace'));
-        $this->assertSame('Internal server error', array_get($data, 'errors.0.message'));
-        $this->assertSame('internal', array_get($data, 'errors.0.extensions.category'));
+        $this->assertFalse(Arr::has($data, 'errors.0.debugMessage'), 'debugMessage should not be included');
+        $this->assertGreaterThan(10, Arr::get($data, 'errors.0.trace'));
+        $this->assertSame('Internal server error', Arr::get($data, 'errors.0.message'));
+        $this->assertSame('internal', Arr::get($data, 'errors.0.extensions.category'));
     }
 
     public function test_model_not_found_error()
@@ -168,8 +169,8 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
             'query' => 'query { throwModelNotFoundException }'
         ]));
 
-        $this->assertSame('Dummy not found.', array_get($data, 'errors.0.message'));
-        $this->assertSame('client', array_get($data, 'errors.0.extensions.category'));
+        $this->assertSame('Dummy not found.', Arr::get($data, 'errors.0.message'));
+        $this->assertSame('client', Arr::get($data, 'errors.0.extensions.category'));
     }
 
     public function test_validation_error()
@@ -179,9 +180,9 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
             'query' => 'query { throwValidationException }'
         ]));
 
-        $this->assertSame('The given data was invalid.', array_get($data, 'errors.0.message'));
-        $this->assertSame('validation', array_get($data, 'errors.0.extensions.category'));
-        $this->assertSame(['foo' => ['The foo field is required.']], array_get($data, 'errors.0.extensions.validation'));
+        $this->assertSame('The given data was invalid.', Arr::get($data, 'errors.0.message'));
+        $this->assertSame('validation', Arr::get($data, 'errors.0.extensions.category'));
+        $this->assertSame(['foo' => ['The foo field is required.']], Arr::get($data, 'errors.0.extensions.validation'));
     }
 
     public function test_invalid_query()
