@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Support for shared data loaders when resolvers use the same underlying data.
+
 
 ## [2.1.0] - 2019-09-05
 

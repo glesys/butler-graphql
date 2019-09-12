@@ -2,6 +2,7 @@
 
 namespace Butler\Graphql\Tests;
 
+use Butler\Graphql\Tests\Types\Thing;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -77,20 +78,34 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
     {
         $controller = $this->app->make(GraphqlController::class);
         $data = $controller(Request::create('/', 'POST', [
-            'query' => 'query { dataLoader { dataLoaded } }'
+            'query' => 'query { dataLoader { dataLoaded sharedDataLoaderOne sharedDataLoaderTwo } }'
         ]));
 
         $this->assertSame(
             [
                 'data' => [
                     'dataLoader' => [
-                        ['dataLoaded' => 'THING 1'],
-                        ['dataLoaded' => 'THING 2'],
+                        [
+                            'dataLoaded' => 'THING 1',
+                            'sharedDataLoaderOne' => 'thing 1',
+                            'sharedDataLoaderTwo' => '1 gniht',
+                        ],
+                        [
+                            'dataLoaded' => 'THING 2',
+                            'sharedDataLoaderOne' => 'thing 2',
+                            'sharedDataLoaderTwo' => '2 gniht',
+                        ],
                     ],
                 ],
             ],
             $data
         );
+
+        $this->assertEquals(1, Thing::$inlineDataLoaderInvokations, 'inline data loader should only be invoked once');
+        $this->assertEquals(2, Thing::$inlineDataLoaderResolves, 'inline data loader should be resolved multiple times');
+
+        $this->assertEquals(1, Thing::$sharedDataLoaderInvokations, 'sharedDataLoader should only be invoked once');
+        $this->assertEquals(4, Thing::$sharedDataLoaderResolves, 'sharedDataLoader should be resolved multiple times');
     }
 
     public function test_error()
