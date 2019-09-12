@@ -2,6 +2,8 @@
 
 namespace Butler\Graphql;
 
+use Closure;
+use ReflectionFunction;
 use Illuminate\Support\Collection;
 use leinonen\DataLoader\CacheMap;
 use leinonen\DataLoader\DataLoader as LeinonenDataLoader;
@@ -18,16 +20,30 @@ class DataLoader
         $this->loop = $loop;
     }
 
-    public function __invoke(callable $batchLoadFunction)
+    /**
+     * @param  callable|Closure  $batchLoadFunction
+     */
+    public function __invoke($batchLoadFunction)
     {
-        $backtrace = debug_backtrace();
-        $identifier = $backtrace[1]['class'] . '@' . $backtrace[1]['function'];
+        if (! $batchLoadFunction instanceof Closure) {
+            $batchLoadFunction = Closure::fromCallable($batchLoadFunction);
+        }
+
+        $identifier = $this->identifierForClosure($batchLoadFunction);
 
         return $this->loaders[$identifier] = $this->loaders[$identifier]
             ?? $this->makeLoader($batchLoadFunction);
     }
 
-    private function makeLoader(callable $batchLoadFunction)
+    private function identifierForClosure(Closure $closure)
+    {
+        $reflection = new ReflectionFunction($closure);
+
+        return $reflection->getFileName() . '@' .
+            $reflection->getStartLine() . '-' . $reflection->getEndLine();
+    }
+
+    private function makeLoader(Closure $batchLoadFunction)
     {
         return new LeinonenDataLoader(
             function (...$arguments) use ($batchLoadFunction) {

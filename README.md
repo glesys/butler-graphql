@@ -234,6 +234,52 @@ class Article
 }
 ```
 
+#### Shared Data Loaders
+
+If you have multiple resolvers working with the same underlying data you don't need to duplicate your code or deal with extra round trips to the database.
+
+All you have to do is to define a separate loader function and reuse it in your resolvers:
+
+```php
+<?php
+
+namespace App\Http\Graphql\Types;
+
+use App\Models\Article;
+use Closure;
+
+class Article
+{
+    public function comments(Article $source, $args, $context, $info)
+    {
+        return $context['loader'](Closure::fromCallable([$this, 'loadComments']))
+            ->load($source->id);
+    }
+
+    public function topVotedComment(Article $source, $args, $context, $info)
+    {
+        return $context['loader'](Closure::fromCallable([$this, 'loadComments']))
+            ->load($source->id)
+            ->then(function ($articleComments) {
+                return collect($articleComments)->sortByDesc('votes')->first();
+            });
+    }
+
+    private function loadComments($articleIds)
+    {
+        $comments = Comment::whereIn('article_id', $articleIds)->get();
+
+        return collect($articleIds)->map(function ($articleId) use ($comments) {
+            return $comments->where('article_id', $articleId);
+        });
+    }
+}
+```
+
+Butler GraphQL will make sure that `loadComments` is only called once.
+
+If you don't want to use `Closure::fromCallable(...)` you can change the accessibility of `loadComments` to `public`.
+
 ## Customize
 
 There's no real need to configure Butler GraphQL. It's designed with *convention over configuration* in mind and should be ready to go without any configuration.
