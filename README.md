@@ -317,7 +317,7 @@ Customizing what data to collect and include in the response is easily done by c
 
 ## How To Contribute
 
-Development happens at GitHub, any normal workflow with Pull Requests are welcome. In the same spirit the Issue tracker at GitHub is used for any reports (regardless of the nature of the reports - feature requests, bugs of any nature and so on).
+Development happens at GitHub; any typical workflow using Pull Requests are welcome. In the same spirit, we use the GitHub issue tracker for all reports (regardless of the nature of the report, feature request, bugs, etc.).
 
 ### Code standard
 
