@@ -321,4 +321,4 @@ Development happens at GitHub, any normal workflow with Pull Requests are welcom
 
 ### Code standard
 
-As the library is intended for use in Laravel applications we encourage code standard to follow [https://laravel.com/docs/master/contributions#coding-style](upstream Laravel practices) - in short that would mean [https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md](PSR-2) and [https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-4-autoloader.md](PSR-4).
+As the library is intended for use in Laravel applications we encourage code standard to follow [upstream Laravel practices](https://laravel.com/docs/master/contributions#coding-style) - in short that would mean [PSR-2](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md) and [PSR-4](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-4-autoloader.md).
