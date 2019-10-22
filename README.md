@@ -313,3 +313,11 @@ composer require barryvdh/laravel-debugbar --dev
 When installed, make sure that `APP_DEBUG` is set to `true`, that's it.
 
 Customizing what data to collect and include in the response is easily done by copying the [default config file](https://github.com/barryvdh/laravel-debugbar/blob/master/config/debugbar.php) to `config/debugbar.php` and adjust as needed.
+
+## How To Contribute
+
+Development happens at GitHub, any normal workflow with Pull Requests are welcome. In the same spirit the Issue tracker at GitHub is used for any reports (regardless of the nature of the reports - feature requests, bugs of any nature and so on).
+
+### Code standard
+
+As the library is intended for use in Laravel applications we encourage code standard to follow [https://laravel.com/docs/master/contributions#coding-style](upstream Laravel practices) - in short that would mean [https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md](PSR-2) and [https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-4-autoloader.md](PSR-4).
