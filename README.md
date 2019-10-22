@@ -1,6 +1,7 @@
 [![Build Status](https://img.shields.io/travis/glesys/butler-graphql.svg)](https://travis-ci.org/glesys/butler-graphql)
 [![Packagist](https://img.shields.io/packagist/v/glesys/butler-graphql.svg)](https://packagist.org/packages/glesys/butler-graphql)
 [![License](https://img.shields.io/github/license/glesys/butler-graphql.svg)](LICENCE)
+[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/3288/badge)](https://bestpractices.coreinfrastructure.org/projects/3288)
 
 
 # Butler GraphQL
@@ -313,3 +314,11 @@ composer require barryvdh/laravel-debugbar --dev
 When installed, make sure that `APP_DEBUG` is set to `true`, that's it.
 
 Customizing what data to collect and include in the response is easily done by copying the [default config file](https://github.com/barryvdh/laravel-debugbar/blob/master/config/debugbar.php) to `config/debugbar.php` and adjust as needed.
+
+## How To Contribute
+
+Development happens at GitHub; any typical workflow using Pull Requests are welcome. In the same spirit, we use the GitHub issue tracker for all reports (regardless of the nature of the report, feature request, bugs, etc.).
+
+### Code standard
+
+As the library is intended for use in Laravel applications we encourage code standard to follow [upstream Laravel practices](https://laravel.com/docs/master/contributions#coding-style) - in short that would mean [PSR-2](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md) and [PSR-4](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-4-autoloader.md).
