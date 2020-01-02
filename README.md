@@ -1,4 +1,6 @@
 [![Build Status](https://img.shields.io/travis/glesys/butler-graphql.svg)](https://travis-ci.org/glesys/butler-graphql)
+[![Code Coverage](https://scrutinizer-ci.com/g/glesys/butler-graphql/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/glesys/butler-graphql/?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/glesys/butler-graphql/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/glesys/butler-graphql/?branch=master)
 [![Packagist](https://img.shields.io/packagist/v/glesys/butler-graphql.svg)](https://packagist.org/packages/glesys/butler-graphql)
 [![License](https://img.shields.io/github/license/glesys/butler-graphql.svg)](LICENCE)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/3288/badge)](https://bestpractices.coreinfrastructure.org/projects/3288)
