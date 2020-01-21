@@ -33,7 +33,7 @@ class ServiceProviderTest extends AbstractTestCase
     public function test_namespace_config()
     {
         $namespace = $this->app->config->get('butler.graphql.namespace');
-        $this->assertSame($namespace, '\\App\\Http\\Graphql\\');
+        $this->assertSame($namespace, 'App\\Http\\Graphql\\');
     }
 
     public function test_schema_config()

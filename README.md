@@ -296,7 +296,7 @@ php artisan vendor:publish
 ### Change the Schema Location and Namespaces
 
 - `BUTLER_GRAPHQL_SCHEMA` – Defaults to `app_path('Http/Graphql/schema.graphql')`.
-- `BUTLER_GRAPHQL_NAMESPACE` – Defaults to `'\\App\\Http\\Graphql\\'`.
+- `BUTLER_GRAPHQL_NAMESPACE` – Defaults to `'App\\Http\\Graphql\\'`.
 
 ### Debugging
 
