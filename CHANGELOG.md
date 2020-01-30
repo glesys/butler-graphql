@@ -7,8 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [3.0.0] - 2020-01-30
+
 ### Changed
 - **BREAKING**: Removes leading slashes in the default namespace configuration to better support dependency injection with the laravel container. [#24](https://github.com/glesys/butler-graphql/pull/24)
+
 
 ## [2.2.0] - 2019-09-12
 
