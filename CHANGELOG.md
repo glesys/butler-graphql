@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Require PHP 7.2.5.
+- Support Laravel 7.
 
 ## [3.0.0] - 2020-01-30
 
