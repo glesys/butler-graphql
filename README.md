@@ -38,7 +38,7 @@ type Signup {
 ```php
 <?php
 
-namespace App\Http\Grapql\Queries;
+namespace App\Http\Grapqhl\Queries;
 
 class PendingSignups
 {
