@@ -3,6 +3,7 @@
 namespace Butler\Graphql\Tests\Types;
 
 use Closure;
+use Exception;
 use GraphQL\Type\Definition\ResolveInfo;
 
 class Thing
@@ -69,5 +70,14 @@ class Thing
         if (is_array($source) && $source['name'] === 'Attachment 1') {
             return 'Photo';
         }
+        throw new Exception('Should never be reached');
+    }
+
+    public function resolveTypeForMedia($source, $context, ResolveInfo $info)
+    {
+        if (is_array($source) && $source['name'] === 'Video 1') {
+            return 'Video';
+        }
+        throw new Exception('Should never be reached');
     }
 }

@@ -370,6 +370,116 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
         );
     }
 
+    public function test_resolve_union_from_query()
+    {
+        $controller = $this->app->make(GraphqlController::class);
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'query {
+                resolveUnionFromQuery {
+                    __typename
+                    ...on Audio {
+                        name
+                        size
+                        encoding
+                    }
+                    ...on Attachment {
+                        name
+                        size
+                    }
+                    ...on Photo {
+                        height
+                        width
+                    }
+                    ...on Video {
+                        length
+                    }
+                }
+            }'
+        ]));
+
+        $this->assertSame(
+            [
+                'data' => [
+                    'resolveUnionFromQuery' => [
+                        [
+                            '__typename' => 'Audio',
+                            'name' => 'Soundtrack 1',
+                            'size' => 1024,
+                            'encoding' => 'mp3',
+                        ],
+                        [
+                            '__typename' => 'Audio',
+                            'name' => 'Soundtrack 2',
+                            'size' => 2048,
+                            'encoding' => 'mp3',
+                        ],
+                        [
+                            '__typename' => 'Audio',
+                            'name' => 'Soundtrack 3',
+                            'size' => 4096,
+                            'encoding' => 'mp3',
+                        ],
+                        [
+                            '__typename' => 'Photo',
+                            'name' => 'Photo 1',
+                            'size' => 256,
+                            'height' => 100,
+                            'width' => 200,
+                        ],
+                        [
+                            '__typename' => 'Video',
+                            'name' => 'Video 2',
+                            'size' => 512,
+                            'length' => 3600,
+                        ],
+                    ],
+                ],
+            ],
+            $data
+        );
+    }
+
+    public function test_resolve_union_from_type()
+    {
+        $this->app->config->set('butler.graphql.include_debug_message', true);
+
+        $controller = $this->app->make(GraphqlController::class);
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'query {
+                resolveUnionFromType {
+                    name
+                    media {
+                        __typename
+                        ...on Attachment {
+                            name
+                            size
+                        }
+                        ...on Video {
+                            length
+                        }
+                    }
+                }
+            }'
+        ]));
+
+        $this->assertSame(
+            [
+                'data' => [
+                    'resolveUnionFromType' => [
+                        'name' => 'Thing 1',
+                        'media' => [
+                            '__typename' => 'Video',
+                            'name' => 'Video 1',
+                            'size' => 1024,
+                            'length' => 3600,
+                        ],
+                    ],
+                ],
+            ],
+            $data
+        );
+    }
+
     public function test_resolves_false_correctly()
     {
         $controller = $this->app->make(GraphqlController::class);
