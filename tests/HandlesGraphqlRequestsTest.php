@@ -258,7 +258,10 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
             'query' => 'query { nonExistingClassDependency }'
         ]));
 
-        $this->assertSame("Class Butler\Graphql\Tests\Queries\NonExistingClass does not exist", data_get($data, 'errors.0.debugMessage'));
+        $this->assertContains(data_get($data, 'errors.0.debugMessage'), [
+            "Class Butler\Graphql\Tests\Queries\NonExistingClass does not exist", // Laravel < 6.0
+            "Target class [Butler\Graphql\Tests\Queries\NonExistingClass] does not exist.", // Laravel >= 6.0
+        ]);
     }
 
     public function test_operationName()
