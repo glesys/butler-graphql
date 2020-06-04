@@ -9,8 +9,9 @@ use GraphQL\Error\Error as GraphqlError;
 use GraphQL\Error\FormattedError;
 use GraphQL\Executor\Promise\PromiseAdapter;
 use GraphQL\GraphQL;
-use GraphQL\Language\AST\TypeDefinitionNode;
 use GraphQL\Language\AST\InterfaceTypeDefinitionNode;
+use GraphQL\Language\AST\TypeDefinitionNode;
+use GraphQL\Language\AST\UnionTypeDefinitionNode;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Utils\BuildSchema;
 use Illuminate\Contracts\Debug\ExceptionHandler;
@@ -101,10 +102,16 @@ trait HandlesGraphqlRequests
 
     public function decorateTypeConfig(array $config, TypeDefinitionNode $typeDefinitionNode)
     {
-        if ($typeDefinitionNode instanceof InterfaceTypeDefinitionNode) {
+        if ($this->shouldDecorateWithResolveType($typeDefinitionNode)) {
             $config['resolveType'] = [$this, 'resolveType'];
         }
         return $config;
+    }
+
+    protected function shouldDecorateWithResolveType(TypeDefinitionNode $typeDefinitionNode)
+    {
+        return $typeDefinitionNode instanceof InterfaceTypeDefinitionNode
+            || $typeDefinitionNode instanceof UnionTypeDefinitionNode;
     }
 
     public function debugFlags()

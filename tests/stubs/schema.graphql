@@ -9,6 +9,8 @@ type Query {
     nonExistingClassDependency: String!
     resolveInterfaceFromQuery: [Attachment!]!
     resolveInterfaceFromType: Thing!
+    resolveUnionFromQuery: [Media!]!
+    resolveUnionFromType: Thing!
     variousCasing: [VariousCasing!]!
     resolvesFalseCorrectly: [AnotherThing!]!
 }
@@ -34,6 +36,7 @@ type Thing {
     sharedDataLoaderOne: String!
     sharedDataLoaderTwo: String!
     attachment: Attachment
+    media: Media
 }
 
 type SubThing {
@@ -62,6 +65,14 @@ type Video implements Attachment {
     size: Int!
     length: Int!
 }
+
+type Audio {
+    name: String!
+    size: Int!
+    encoding: String!
+}
+
+union Media = Audio | Photo | Video
 
 type VariousCasing {
     name: String!
