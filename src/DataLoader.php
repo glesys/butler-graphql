@@ -49,7 +49,7 @@ class DataLoader
             function (...$arguments) use ($batchLoadFunction) {
                 $result = $batchLoadFunction(...$arguments);
                 if ($result instanceof Collection) {
-                    $result = $result->toArray();
+                    $result = $result->all();
                 }
                 return Promise\resolve($result);
             },

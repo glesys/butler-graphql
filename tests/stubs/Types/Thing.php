@@ -2,6 +2,8 @@
 
 namespace Butler\Graphql\Tests\Types;
 
+use Butler\Graphql\Tests\TypedSubThing;
+use Butler\Graphql\Tests\TypedThing;
 use Closure;
 use Exception;
 use GraphQL\Type\Definition\ResolveInfo;
@@ -51,6 +53,18 @@ class Thing
         return $context['loader'](Closure::fromCallable([$this, 'sharedDataLoader']))
             ->load($source['name'])
             ->then('strrev');
+    }
+
+    public function subThings(TypedThing $source, $args, $context, ResolveInfo $info)
+    {
+        return $context['loader'](function ($thingNames) {
+            return collect($thingNames)->map(function ($thingName) {
+                return collect([
+                    new TypedSubThing("{$thingName} – Sub Thing 1"),
+                    new TypedSubThing("{$thingName} – Sub Thing 2"),
+                ]);
+            });
+        })->load($source->name);
     }
 
     public function typeField($source, $args, $context, ResolveInfo $info)

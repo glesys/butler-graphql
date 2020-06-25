@@ -1,6 +1,7 @@
 type Query {
     testResolvers: [Thing]
     dataLoader: [Thing]
+    dataLoaderWithCollections: [Thing!]!
     throwError: String!
     throwException: String!
     throwModelNotFoundException: String!
@@ -13,6 +14,7 @@ type Query {
     resolveUnionFromType: Thing!
     variousCasing: [VariousCasing!]!
     resolvesFalseCorrectly: [AnotherThing!]!
+    thingsWithSubThings: [Thing!]!
 }
 
 type Mutation {
@@ -37,10 +39,12 @@ type Thing {
     sharedDataLoaderTwo: String!
     attachment: Attachment
     media: Media
+    subThings: [SubThing!]
 }
 
 type SubThing {
     name: String!
+    thing: Thing
 }
 
 type AnotherThing {
