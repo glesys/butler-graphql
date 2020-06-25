@@ -108,6 +108,33 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
         $this->assertEquals(4, Thing::$sharedDataLoaderResolves, 'sharedDataLoader should be resolved multiple times');
     }
 
+    public function test_data_loader_with_collections()
+    {
+        $this->app->config->set('butler.graphql.include_debug_message', true);
+
+        $controller = $this->app->make(GraphqlController::class);
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'query { dataLoaderWithCollections { name subThings { name } } }'
+        ]));
+
+        $this->assertSame(
+            [
+                'data' => [
+                    'dataLoaderWithCollections' => [
+                        [
+                            'name' => 'Thing 1',
+                            'subThings' => [
+                                ['name' => 'Thing 1 – Sub Thing 1'],
+                                ['name' => 'Thing 1 – Sub Thing 2'],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            $data
+        );
+    }
+
     public function test_error()
     {
         $controller = $this->app->make(GraphqlController::class);
@@ -540,6 +567,39 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
                             'name' => 'Test 3',
                             'camelCase' => 'using camel-case',
                             'snake_case' => 'using snake-case',
+                        ],
+                    ],
+                ],
+            ],
+            $data
+        );
+    }
+    public function test_nested_collections()
+    {
+        $this->app->config->set('butler.graphql.include_debug_message', true);
+
+        $controller = $this->app->make(GraphqlController::class);
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'query {
+                thingsWithSubThings {
+                    name
+                    subThings {
+                        name
+                    }
+                }
+            }'
+        ]));
+
+        $this->assertSame(
+            [
+                'data' => [
+                    'thingsWithSubThings' => [
+                        [
+                            'name' => 'thing',
+                            'subThings' => [
+                                ['name' => 'thing – Sub Thing 1'],
+                                ['name' => 'thing – Sub Thing 2'],
+                            ]
                         ],
                     ],
                 ],
