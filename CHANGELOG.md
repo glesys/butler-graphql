@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [3.2.0] - 2020-08-03
+
 ### Added
 - Union support 🎉. Types are resolved using the same technique as for interfaces: `$source['__typename']`, `$source->__typename`, `Parent@resolveTypeForField()` (`Query@resolveType` for queries and mutations) or class base name.
 
