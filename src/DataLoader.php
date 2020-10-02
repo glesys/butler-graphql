@@ -5,7 +5,6 @@ namespace Butler\Graphql;
 use Closure;
 use ReflectionFunction;
 use Illuminate\Support\Collection;
-use leinonen\DataLoader\CacheMap;
 use leinonen\DataLoader\DataLoader as LeinonenDataLoader;
 use React\EventLoop\LoopInterface;
 use React\Promise;
