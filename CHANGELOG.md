@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - `AssertsPromises` trait, useful for testing data loaders.
 
+### Changed
+- Custom implementation of `CacheMap` with improved keys to prevent excessive looping.
+
 ## [3.2.0] - 2020-08-03
 
 ### Added
