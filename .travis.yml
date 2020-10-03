@@ -42,6 +42,10 @@ matrix:
       env:
         - LARAVEL_VERSION=^7.0
         - PHPUNIT_VERSION=^8.5
+    - php: 7.3
+      env:
+        - LARAVEL_VERSION=^8.0
+        - PHPUNIT_VERSION=^9.0
     - php: 7.4
       env:
         - LARAVEL_VERSION=5.6.*
@@ -62,6 +66,10 @@ matrix:
       env:
         - LARAVEL_VERSION=^7.0
         - PHPUNIT_VERSION=^8.5
+    - php: 7.4
+      env:
+        - LARAVEL_VERSION=^8.0
+        - PHPUNIT_VERSION=^9.0
 
 before_install:
   - composer global require hirak/prestissimo --no-plugins
