@@ -50,8 +50,16 @@ class CacheMapTest extends AbstractTestCase
         $cacheMap->set([1, 2, 3], 'indexed array');
         $cacheMap->set([], 'empty array');
 
-        $cacheMap->set($object1 = tap(new stdClass(), function ($o) { $o->prop = 'foo'; }), 'object 1');
-        $cacheMap->set($object2 = tap(new stdClass(), function ($o) { $o->prop = 'bar'; }), 'object 2');
+        $object1 = tap(new stdClass(), function ($object) {
+            $object->prop = 'foo';
+        });
+
+        $object2 = tap(new stdClass(), function ($object) {
+            $object->prop = 'bar';
+        });
+
+        $cacheMap->set($object1, 'object 1');
+        $cacheMap->set($object2, 'object 2');
 
         $this->assertSame('integer', $cacheMap->get(1));
         $this->assertSame('float', $cacheMap->get(2.3));
