@@ -298,6 +298,8 @@ php artisan vendor:publish
 - `BUTLER_GRAPHQL_SCHEMA` – Defaults to `app_path('Http/Graphql/schema.graphql')`.
 - `BUTLER_GRAPHQL_NAMESPACE` – Defaults to `'App\\Http\\Graphql\\'`.
 
+*NOTE:* If you don't want to load the schema from file, you can override the `schema()` method of `HandlesGraphqlRequests` to return the content of the schema anyway you'd like.
+
 ### Debugging
 
 - `BUTLER_GRAPHQL_INCLUDE_DEBUG_MESSAGE` – Set to `true` to include the real error message in error responses. Defaults to `false`.
