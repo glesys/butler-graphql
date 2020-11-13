@@ -59,7 +59,7 @@ trait HandlesGraphqlRequests
     
     public function getSchema()
     {
-        return file_get_contents($this->schemaPath())
+        return file_get_contents($this->schemaPath());
     }
 
     public function errorFormatter(GraphqlError $graphqlError)
