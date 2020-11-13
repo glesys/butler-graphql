@@ -31,7 +31,8 @@ trait HandlesGraphqlRequests
     public function __invoke(Request $request)
     {
         $loader = app(DataLoader::class);
-        $schema = BuildSchema::build(file_get_contents($this->schemaPath()), [$this, 'decorateTypeConfig']);
+
+        $schema = BuildSchema::build($this->schema(), [$this, 'decorateTypeConfig']);
 
         /** @var \GraphQL\Executor\ExecutionResult */
         $result = null;
@@ -93,6 +94,11 @@ trait HandlesGraphqlRequests
     public function reportException(Exception $exception)
     {
         app(ExceptionHandler::class)->report($exception);
+    }
+
+    public function schema()
+    {
+        return file_get_contents($this->schemaPath());
     }
 
     public function schemaPath()
