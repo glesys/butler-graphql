@@ -607,4 +607,21 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
             $data
         );
     }
+
+    public function test_custom_schema()
+    {
+        $controller = $this->app->make(GraphqlControllerWithCustomSchema::class);
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'query { foo }'
+        ]));
+
+        $this->assertSame(
+            [
+                'data' => [
+                    'foo' => 'bar',
+                ],
+            ],
+            $data
+        );
+    }
 }

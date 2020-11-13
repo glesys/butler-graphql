@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Support PHP 8
+- In addition to `schemaPath()` it's now possible to override the `schema()` method. This can be useful if your GraphQL schema needs to be fetched from some other source than a file on disk. [#33](https://github.com/glesys/butler-graphql/pull/33)
 
 ### Changed
 - **BREAKING**: Upgrade to webonyx/graphql-php@14.3.0. See https://github.com/webonyx/graphql-php/blob/v14.3.0/UPGRADE.md for breaking changes.
