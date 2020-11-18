@@ -72,7 +72,6 @@ matrix:
         - PHPUNIT_VERSION=^9.0
 
 before_install:
-  - composer global require hirak/prestissimo --no-plugins
   - composer require "laravel/framework:${LARAVEL_VERSION}" --no-update
   - composer require "phpunit/phpunit:${PHPUNIT_VERSION}" --dev --no-update
 
