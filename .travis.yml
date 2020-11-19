@@ -1,6 +1,7 @@
 language: php
+os: linux
 
-matrix:
+jobs:
   include:
     - php: 7.2.5
       env:
