@@ -4,7 +4,7 @@ namespace Butler\Graphql\Concerns;
 
 use Butler\Graphql\DataLoader;
 use Exception;
-use GraphQL\Error\Debug;
+use GraphQL\Error\DebugFlag;
 use GraphQL\Error\Error as GraphqlError;
 use GraphQL\Error\FormattedError;
 use GraphQL\Executor\Promise\PromiseAdapter;
@@ -32,9 +32,9 @@ trait HandlesGraphqlRequests
     {
         $loader = app(DataLoader::class);
         $schema = BuildSchema::build(file_get_contents($this->schemaPath()), [$this, 'decorateTypeConfig']);
-        $result = null;
 
-        GraphQL::useExperimentalExecutor();
+        /** @var \GraphQL\Executor\ExecutionResult */
+        $result = null;
 
         GraphQL::promiseToExecute(
             app(PromiseAdapter::class),
@@ -118,10 +118,10 @@ trait HandlesGraphqlRequests
     {
         $flags = 0;
         if (config('butler.graphql.include_debug_message')) {
-            $flags |= Debug::INCLUDE_DEBUG_MESSAGE;
+            $flags |= DebugFlag::INCLUDE_DEBUG_MESSAGE;
         }
         if (config('butler.graphql.include_trace')) {
-            $flags |= Debug::INCLUDE_TRACE;
+            $flags |= DebugFlag::INCLUDE_TRACE;
         }
         return $flags;
     }
