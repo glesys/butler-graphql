@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Support PHP 8
+
 ### Changed
 - **BREAKING**: Upgrade to webonyx/graphql-php@14.3.0. See https://github.com/webonyx/graphql-php/blob/v14.3.0/UPGRADE.md for breaking changes.
 
