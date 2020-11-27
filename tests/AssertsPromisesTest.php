@@ -124,6 +124,7 @@ class AssertsPromisesTest extends TestCase
             {
                 return $this->context['loader'](function (array $numbers) {
                     return collect($numbers)->map(function ($base) {
+                        throw_unless(is_int($base), Exception::class);
                         return pow($base, 2);
                     });
                 })->load($base);
