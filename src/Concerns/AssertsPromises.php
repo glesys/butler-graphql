@@ -38,7 +38,7 @@ trait AssertsPromises
         }
 
         if (! is_null($expectedValue)) {
-            $this->assertEquals(
+            $this->assertSame(
                 $expectedValue,
                 $result,
                 'Failed asserting that promise fulfills with a specified value.'

@@ -65,7 +65,7 @@ class AssertsPromisesTest extends TestCase
         } catch (Exception $exception) {
             $this->assertEquals(
                 "Failed asserting that promise fulfills with a specified value.\n" .
-                "Failed asserting that 4 matches expected 5.",
+                "Failed asserting that 4 is identical to 5.",
                 $exception->getMessage()
             );
             return;
