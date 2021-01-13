@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **BREAKING**: Strict check for expected value in `assertPromiseFulfills`.
 
 ## [4.0.0] - 2020-12-10
 
