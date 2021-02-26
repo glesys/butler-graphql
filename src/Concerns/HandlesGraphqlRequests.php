@@ -20,8 +20,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
+use function Amp\call;
+
 trait HandlesGraphqlRequests
 {
+    private $classCache;
+    private $namespaceCache;
+
     /**
      * Invoke the Graphql request handler.
      *
@@ -30,6 +35,9 @@ trait HandlesGraphqlRequests
      */
     public function __invoke(Request $request)
     {
+        $this->classCache = [];
+        $this->namespaceCache = null;
+
         $loader = app(DataLoader::class);
 
         $schema = BuildSchema::build($this->schema(), [$this, 'decorateTypeConfig']);
@@ -64,9 +72,7 @@ trait HandlesGraphqlRequests
         $throwable = $graphqlError->getPrevious();
 
         $this->reportException(
-            $throwable instanceof Exception
-            ? $throwable
-            : $graphqlError
+            $throwable instanceof Exception ? $throwable : $graphqlError
         );
 
         if ($throwable instanceof ModelNotFoundException) {
@@ -138,9 +144,11 @@ trait HandlesGraphqlRequests
             ?? $this->fieldFromArray($source, $args, $context, $info)
             ?? $this->fieldFromObject($source, $args, $context, $info);
 
-        return $field instanceof \Closure
-            ? $field($source, $args, $context, $info)
-            : $field;
+        return call(static function () use ($field, $source, $args, $context, $info) {
+            return $field instanceof \Closure
+                ? $field($source, $args, $context, $info)
+                : $field;
+        });
     }
 
     public function resolveType($source, $context, ResolveInfo $info)
@@ -156,8 +164,7 @@ trait HandlesGraphqlRequests
         $className = $this->resolveClassName($info);
         $methodName = $this->resolveFieldMethodName($info);
 
-        if (app()->has($className) || class_exists($className)) {
-            $resolver = app($className);
+        if ($resolver = $this->make($className)) {
             if (method_exists($resolver, $methodName)) {
                 return $resolver->{$methodName}($source, $args, $context, $info);
             }
@@ -211,8 +218,7 @@ trait HandlesGraphqlRequests
         $className = $this->resolveClassName($info);
         $methodName = $this->resolveTypeMethodName($info);
 
-        if (app()->has($className) || class_exists($className)) {
-            $resolver = app($className);
+        if ($resolver = $this->make($className)) {
             if (method_exists($resolver, $methodName)) {
                 return $resolver->{$methodName}($source, $context, $info);
             }
@@ -268,7 +274,7 @@ trait HandlesGraphqlRequests
 
     public function namespace(): string
     {
-        return config('butler.graphql.namespace');
+        return $this->namespaceCache ?? $this->namespaceCache = config('butler.graphql.namespace');
     }
 
     public function queriesNamespace(): string
@@ -292,5 +298,18 @@ trait HandlesGraphqlRequests
             $data['debug'] = app('debugbar')->getData();
         }
         return $data;
+    }
+
+    protected function make(string $className)
+    {
+        if (array_key_exists($className, $this->classCache)) {
+            return $this->classCache[$className];
+        }
+
+        $class = app()->has($className) || class_exists($className)
+            ? app($className)
+            : null;
+
+        return $this->classCache[$className] = $class;
     }
 }

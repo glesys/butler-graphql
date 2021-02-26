@@ -41,8 +41,8 @@
     "name": "glesys/butler-graphql",
     "require": {
         "php": "^7.2.5|^8.0",
+        "amphp/amp": "^2.5",
         "illuminate/support": "5.6.*|5.7.*|5.8.*|^6.0|^7.0|^8.0",
-        "leinonen/php-dataloader": "^1.0",
         "webonyx/graphql-php": "^14.3.0"
     },
     "require-dev": {

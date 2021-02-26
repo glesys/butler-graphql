@@ -228,14 +228,15 @@ class Article
     public function comments(Article $source, $args, $context, $info)
     {
         return $context['loader'](function ($articleIds) {
-            $comments = Comment::whereIn('article_id', $articleIds)->get();
-            return collect($articleIds)->map(function ($articleId) use ($comments) {
-                return $comments->where('article_id', $articleId);
-            });
-        })->load($source->id);
+            return Comment::whereIn('article_id', $articleIds)
+                ->cursor()
+                ->groupBy('article_id');
+        }, [])->load($source->id);
     }
 }
 ```
+
+_NOTE:_ You can provide a default value as the second argument to the loader factory. This can be useful when you know some Articles might not have any Comments, like in the example above. Defaults to `null`.
 
 #### Shared Data Loaders
 
@@ -255,26 +256,23 @@ class Article
 {
     public function comments(Article $source, $args, $context, $info)
     {
-        return $context['loader'](Closure::fromCallable([$this, 'loadComments']))
+        return $context['loader'](Closure::fromCallable([$this, 'loadComments']), [])
             ->load($source->id);
     }
 
     public function topVotedComment(Article $source, $args, $context, $info)
     {
-        return $context['loader'](Closure::fromCallable([$this, 'loadComments']))
-            ->load($source->id)
-            ->then(function ($articleComments) {
-                return collect($articleComments)->sortByDesc('votes')->first();
-            });
+        $comments = yield $context['loader'](Closure::fromCallable([$this, 'loadComments']))
+            ->load($source->id);
+
+        return collect($comments)->sortByDesc('votes')->first();
     }
 
     private function loadComments($articleIds)
     {
-        $comments = Comment::whereIn('article_id', $articleIds)->get();
-
-        return collect($articleIds)->map(function ($articleId) use ($comments) {
-            return $comments->where('article_id', $articleId);
-        });
+        return Comment::whereIn('article_id', $articleIds)
+            ->cursor()
+            ->groupBy('article_id');
     }
 }
 ```
