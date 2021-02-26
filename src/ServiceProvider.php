@@ -5,7 +5,6 @@ namespace Butler\Graphql;
 use Illuminate\Foundation\Application as LaravelApplication;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use Laravel\Lumen\Application as LumenApplication;
-use React\EventLoop\Factory as ReactEventLoopFactory;
 
 class ServiceProvider extends BaseServiceProvider
 {
@@ -18,12 +17,8 @@ class ServiceProvider extends BaseServiceProvider
     {
         $this->app->bind(
             \GraphQL\Executor\Promise\PromiseAdapter::class,
-            \GraphQL\Executor\Promise\Adapter\ReactPromiseAdapter::class
+            \GraphQL\Executor\Promise\Adapter\AmpPromiseAdapter::class
         );
-
-        $this->app->bind(\React\EventLoop\LoopInterface::class, function () {
-            return ReactEventLoopFactory::create();
-        });
     }
 
     /**

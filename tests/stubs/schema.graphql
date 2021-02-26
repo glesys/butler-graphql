@@ -35,6 +35,10 @@ type Thing {
     typeFieldWithClosure: String!
     missingType: SubThing
     dataLoaded: String!
+    dataLoadedByKey: String!
+    dataLoadedUsingArray: String!
+    dataLoadedUsingObject: String!
+    dataLoadedWithDefault: String!
     sharedDataLoaderOne: String!
     sharedDataLoaderTwo: String!
     attachment: Attachment

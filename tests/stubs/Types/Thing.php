@@ -29,6 +29,43 @@ class Thing
         })->load($source['name']);
     }
 
+    public function dataLoadedByKey($source, $args, $context, ResolveInfo $info)
+    {
+        return $context['loader'](function () {
+            return [
+                'Thing 1' => 'By key: Thing 1',
+                'Thing 2' => 'By key: Thing 2',
+            ];
+        })->load($source['name']);
+    }
+
+    public function dataLoadedWithDefault($source, $args, $context, ResolveInfo $info)
+    {
+        return $context['loader'](function () {
+            return [
+                'Thing 1' => 'Thing 1',
+            ];
+        }, 'default value')->load($source['name']);
+    }
+
+    public function dataLoadedUsingArray($source, $args, $context, ResolveInfo $info)
+    {
+        return $context['loader'](function ($sources) {
+            return collect($sources)->map(function ($source) {
+                return "As array: {$source['name']}";
+            });
+        })->load((array) $source);
+    }
+
+    public function dataLoadedUsingObject($source, $args, $context, ResolveInfo $info)
+    {
+        return $context['loader'](function ($sources) {
+            return collect($sources)->map(function ($source) {
+                return "As object: {$source->name}";
+            });
+        })->load((object) $source);
+    }
+
     public function sharedDataLoader($names)
     {
         self::$sharedDataLoaderInvokations++;
@@ -50,9 +87,10 @@ class Thing
     {
         self::$sharedDataLoaderResolves++;
 
-        return $context['loader'](Closure::fromCallable([$this, 'sharedDataLoader']))
-            ->load($source['name'])
-            ->then('strrev');
+        return strrev(
+            yield $context['loader'](Closure::fromCallable([$this, 'sharedDataLoader']))
+                ->load($source['name'])
+        );
     }
 
     public function subThings(TypedThing $source, $args, $context, ResolveInfo $info)

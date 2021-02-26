@@ -2,13 +2,12 @@
 
 namespace Butler\Graphql\Tests;
 
+use Amp\Promise as PromiseInterface;
 use Butler\Graphql\Concerns\AssertsPromises;
 use Butler\Graphql\DataLoader;
 use Exception;
 use PHPUnit\Framework\TestCase;
-use React\Promise\PromiseInterface;
-
-use function React\Promise\reject;
+use RuntimeException;
 
 class AssertsPromisesTest extends TestCase
 {
@@ -82,7 +81,7 @@ class AssertsPromisesTest extends TestCase
             $this->testObject->assertPromiseFulfills($promise);
         } catch (Exception $exception) {
             $this->assertEquals(
-                'Failed asserting that promise fulfills. Promise was rejected.',
+                'Failed asserting that promise fulfills. Promise was rejected: Provided value not an integer',
                 $exception->getMessage()
             );
             return;
@@ -93,13 +92,13 @@ class AssertsPromisesTest extends TestCase
 
     public function test_assertPromiseFulfills_handles_rejected_promise()
     {
-        $promise = reject($this->testObject->square(1));
+        $promise = new \Amp\Failure(new Exception('foo bar')); // reject($this->testObject->square(1));
 
         try {
             $this->testObject->assertPromiseFulfills($promise);
         } catch (Exception $exception) {
             $this->assertEquals(
-                'Failed asserting that promise fulfills. Promise was rejected.',
+                'Failed asserting that promise fulfills. Promise was rejected: foo bar',
                 $exception->getMessage()
             );
             return;
@@ -117,14 +116,14 @@ class AssertsPromisesTest extends TestCase
 
             public function __construct()
             {
-                $this->context = ['loader' => new DataLoader($this->getLoop())];
+                $this->context = ['loader' => new DataLoader()];
             }
 
             public function square($base): PromiseInterface
             {
                 return $this->context['loader'](function (array $numbers) {
                     return collect($numbers)->map(function ($base) {
-                        throw_unless(is_int($base), Exception::class);
+                        throw_unless(is_int($base), RuntimeException::class, 'Provided value not an integer');
                         return pow($base, 2);
                     });
                 })->load($base);

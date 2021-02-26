@@ -76,9 +76,21 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
 
     public function test_data_loader()
     {
+        $this->app->config->set('butler.graphql.include_debug_message', true);
+
         $controller = $this->app->make(GraphqlController::class);
         $data = $controller(Request::create('/', 'POST', [
-            'query' => 'query { dataLoader { dataLoaded sharedDataLoaderOne sharedDataLoaderTwo } }'
+            'query' => 'query {
+                dataLoader {
+                    dataLoaded
+                    dataLoadedByKey
+                    dataLoadedUsingArray
+                    dataLoadedUsingObject
+                    dataLoadedWithDefault
+                    sharedDataLoaderOne
+                    sharedDataLoaderTwo
+                }
+            }'
         ]));
 
         $this->assertSame(
@@ -87,11 +99,19 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
                     'dataLoader' => [
                         [
                             'dataLoaded' => 'THING 1',
+                            'dataLoadedByKey' => 'By key: Thing 1',
+                            'dataLoadedUsingArray' => 'As array: Thing 1',
+                            'dataLoadedUsingObject' => 'As object: Thing 1',
+                            'dataLoadedWithDefault' => 'Thing 1',
                             'sharedDataLoaderOne' => 'thing 1',
                             'sharedDataLoaderTwo' => '1 gniht',
                         ],
                         [
                             'dataLoaded' => 'THING 2',
+                            'dataLoadedByKey' => 'By key: Thing 2',
+                            'dataLoadedUsingArray' => 'As array: Thing 2',
+                            'dataLoadedUsingObject' => 'As object: Thing 2',
+                            'dataLoadedWithDefault' => 'default value',
                             'sharedDataLoaderOne' => 'thing 2',
                             'sharedDataLoaderTwo' => '2 gniht',
                         ],
