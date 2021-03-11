@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [5.0.0] - 2021-03-11
+
 ### Changed
 - **BREAKING**: Strict check for expected value in `assertPromiseFulfills`.
 - **BREAKING**: Improved performance when using data loaders with a tailored implementation based on `amphp/amp` instead of `leinonen/php-dataloader`. See [UPGRADE.md](UPGRADE.md) for details on how to upgrade.
