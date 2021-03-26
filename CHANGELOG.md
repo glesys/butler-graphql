@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- The new `beforeExecutionHook` hook lets your GraphQL controller (using the `HandlesGraphqlRequests` trait) inspect the schema and query before entering the execution phase.
+
 
 ## [5.0.0] - 2021-03-11
 
