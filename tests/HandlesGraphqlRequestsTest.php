@@ -3,6 +3,11 @@
 namespace Butler\Graphql\Tests;
 
 use Butler\Graphql\Tests\Types\Thing;
+use Exception;
+use GraphQL\Error\Error;
+use GraphQL\Error\SyntaxError;
+use GraphQL\Language\AST\DocumentNode;
+use GraphQL\Type\Schema;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -171,7 +176,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
     public function test_error_reporting_with_exception()
     {
         $handler = Mockery::mock(ExceptionHandler::class);
-        $handler->shouldReceive('report')->once();
+        $handler->shouldReceive('report')->once()->with(Mockery::type(Exception::class));
 
         $this->app->instance(ExceptionHandler::class, $handler);
 
@@ -184,7 +189,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
     public function test_error_reporting_with_php_error()
     {
         $handler = Mockery::mock(ExceptionHandler::class);
-        $handler->shouldReceive('report')->once();
+        $handler->shouldReceive('report')->once()->with(Mockery::type(Error::class));
 
         $this->app->instance(ExceptionHandler::class, $handler);
 
@@ -247,15 +252,28 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
         $this->assertSame(['foo' => ['The foo field is required.']], Arr::get($data, 'errors.0.extensions.validation'));
     }
 
+    public function test_invalid_schema()
+    {
+        $handler = Mockery::mock(ExceptionHandler::class);
+        $handler->shouldReceive('report')->once()->with(Mockery::type(SyntaxError::class));
+
+        $this->app->instance(ExceptionHandler::class, $handler);
+
+        $controller = $this->app->make(GraphqlControllerWithInvalidSchema::class);
+        $controller(Request::create('/', 'POST', [
+            'query' => 'hello world'
+        ]));
+    }
+
     public function test_invalid_query()
     {
         $handler = Mockery::mock(ExceptionHandler::class);
-        $handler->shouldReceive('report')->once();
+        $handler->shouldReceive('report')->once()->with(Mockery::type(SyntaxError::class));
 
         $this->app->instance(ExceptionHandler::class, $handler);
 
         $controller = $this->app->make(GraphqlController::class);
-        $data = $controller(Request::create('/', 'POST', [
+        $controller(Request::create('/', 'POST', [
             'query' => 'hello world'
         ]));
     }
@@ -626,6 +644,22 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
             ],
             $data
         );
+    }
+
+    public function test_before_execution_hook()
+    {
+        $controller = $this->app->make(GraphqlControllerWithBeforeExecutionHook::class);
+
+        $controller(Request::create('/', 'POST', [
+            'query' => 'query monkey { foo } query { bar }',
+            'operationName' => 'fooBar',
+            'variables' => ['foo' => 'bar'],
+        ]));
+
+        $this->assertInstanceOf(Schema::class, $controller->schema);
+        $this->assertInstanceOf(DocumentNode::class, $controller->query);
+        $this->assertSame('fooBar', $controller->operationName);
+        $this->assertEquals(['foo' => 'bar'], $controller->variables);
     }
 
     public function test_custom_schema()

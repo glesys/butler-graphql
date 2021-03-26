@@ -7,12 +7,16 @@ use Exception;
 use GraphQL\Error\DebugFlag;
 use GraphQL\Error\Error as GraphqlError;
 use GraphQL\Error\FormattedError;
+use GraphQL\Executor\ExecutionResult;
 use GraphQL\Executor\Promise\PromiseAdapter;
 use GraphQL\GraphQL;
+use GraphQL\Language\AST\DocumentNode;
 use GraphQL\Language\AST\InterfaceTypeDefinitionNode;
 use GraphQL\Language\AST\TypeDefinitionNode;
 use GraphQL\Language\AST\UnionTypeDefinitionNode;
+use GraphQL\Language\Parser;
 use GraphQL\Type\Definition\ResolveInfo;
+use GraphQL\Type\Schema;
 use GraphQL\Utils\BuildSchema;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -40,30 +44,51 @@ trait HandlesGraphqlRequests
 
         $loader = app(DataLoader::class);
 
-        $schema = BuildSchema::build($this->schema(), [$this, 'decorateTypeConfig']);
+        $query = $request->input('query');
+        $variables = $request->input('variables');
+        $operationName = $request->input('operationName');
 
-        /** @var \GraphQL\Executor\ExecutionResult */
-        $result = null;
+        try {
+            $schema = BuildSchema::build($this->schema(), [$this, 'decorateTypeConfig']);
 
-        GraphQL::promiseToExecute(
-            app(PromiseAdapter::class),
-            $schema,
-            $request->input('query'),
-            null, // root
-            compact('loader'), // context
-            $request->input('variables'),
-            $request->input('operationName'),
-            [$this, 'resolveField'],
-            null // validationRules
-        )->then(function ($value) use (&$result) {
-            $result = $value;
-        });
+            $source = Parser::parse($query);
 
-        $loader->run();
+            $this->beforeExecutionHook($schema, $source, $operationName, $variables);
+
+            /** @var \GraphQL\Executor\ExecutionResult */
+            $result = null;
+
+            GraphQL::promiseToExecute(
+                app(PromiseAdapter::class),
+                $schema,
+                $source,
+                null, // root
+                compact('loader'), // context
+                $variables,
+                $operationName,
+                [$this, 'resolveField'],
+                null // validationRules
+            )->then(function ($value) use (&$result) {
+                $result = $value;
+            });
+
+            $loader->run();
+        } catch (GraphqlError $e) {
+            $result = new ExecutionResult(null, [$e]);
+        }
 
         $result->setErrorFormatter([$this, 'errorFormatter']);
 
         return $this->decorateResponse($result->toArray($this->debugFlags()));
+    }
+
+    public function beforeExecutionHook(
+        Schema $schema,
+        DocumentNode $query,
+        string $operationName = null,
+        $variables = null
+    ): void {
+        return;
     }
 
     public function errorFormatter(GraphqlError $graphqlError)

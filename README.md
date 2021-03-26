@@ -315,6 +315,36 @@ When installed, make sure that `APP_DEBUG` is set to `true`, that's it.
 
 Customizing what data to collect and include in the response is easily done by copying the [default config file](https://github.com/barryvdh/laravel-debugbar/blob/master/config/debugbar.php) to `config/debugbar.php` and adjust as needed.
 
+### Authorization
+
+If you need to authorize GraphQL request you can use the `beforeExecutionHook` method to inspect the schema and query and implement your authorization logic there.
+
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use Butler\Graphql\Concerns\HandlesGraphqlRequests;
+use GraphQL\Type\Schema;
+use GraphQL\Language\AST\DocumentNode;
+
+class GraphqlController extends Controller
+{
+    use HandlesGraphqlRequests;
+
+    /**
+     * @param  $schema         A parsed version of your GraphQL schema
+     * @param  $query          A parsed version of the consumer's query
+     * @param  $operationName  The passed operation name (for when the query contains multiple operations)
+     * @param  $variables      Any variables passed alongside the query
+     */
+    public function beforeExecutionHook(Schema $schema, DocumentNode $query, string $operationName = null, $variables = null): void
+    {
+        // TODO: Implement custom authorization logic here
+    }
+}
+```
+
 ## How To Contribute
 
 Development happens at GitHub; any typical workflow using Pull Requests are welcome. In the same spirit, we use the GitHub issue tracker for all reports (regardless of the nature of the report, feature request, bugs, etc.).
