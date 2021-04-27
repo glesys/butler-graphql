@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 use function Amp\call;
 
@@ -100,11 +101,26 @@ trait HandlesGraphqlRequests
             $throwable instanceof Exception ? $throwable : $graphqlError
         );
 
+        if (
+            $throwable instanceof HttpException &&
+            $throwable->getStatusCode() >= 400 &&
+            $throwable->getStatusCode() < 500
+        ) {
+            return array_merge($formattedError, [
+                'message' => $throwable->getMessage(),
+                'extensions' => [
+                    'category' => 'client',
+                    'code' => $throwable->getStatusCode(),
+                ],
+            ]);
+        }
+
         if ($throwable instanceof ModelNotFoundException) {
             return array_merge($formattedError, [
                 'message' => class_basename($throwable->getModel()) . ' not found.',
                 'extensions' => [
                     'category' => 'client',
+                    'code' => 404,
                 ],
             ]);
         }

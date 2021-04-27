@@ -4,6 +4,7 @@ type Query {
     dataLoaderWithCollections: [Thing!]!
     throwError: String!
     throwException: String!
+    throwHttpException(code: Int = 400): String!
     throwModelNotFoundException: String!
     throwValidationException: String!
     ping: String!
