@@ -229,6 +229,28 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
         $this->assertSame('internal', Arr::get($data, 'errors.0.extensions.category'));
     }
 
+    public function test_http_client_error_is_formatted()
+    {
+        $controller = $this->app->make(GraphqlController::class);
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'query { throwHttpException(code: 400) }'
+        ]));
+
+        $this->assertSame('Bad Request', Arr::get($data, 'errors.0.message'));
+        $this->assertSame('client', Arr::get($data, 'errors.0.extensions.category'));
+        $this->assertSame(400, Arr::get($data, 'errors.0.extensions.code'));
+    }
+
+    public function test_http_server_error_is_not_formatted()
+    {
+        $controller = $this->app->make(GraphqlController::class);
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'query { throwHttpException(code: 500) }'
+        ]));
+
+        $this->assertSame('Internal server error', Arr::get($data, 'errors.0.message'));
+    }
+
     public function test_model_not_found_error()
     {
         $controller = $this->app->make(GraphqlController::class);
@@ -238,6 +260,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
 
         $this->assertSame('Dummy not found.', Arr::get($data, 'errors.0.message'));
         $this->assertSame('client', Arr::get($data, 'errors.0.extensions.category'));
+        $this->assertSame(404, Arr::get($data, 'errors.0.extensions.code'));
     }
 
     public function test_validation_error()
