@@ -8,8 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## [6.0.0] - 2021-05-12
+
 ### Added
 - Handle `Symfony\Component\HttpKernel\Exception\HttpException` exceptions.
+
 
 ## [5.1.0] - 2021-03-29
 
