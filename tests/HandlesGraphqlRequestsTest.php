@@ -30,7 +30,17 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
 
         $controller = $this->app->make(GraphqlController::class);
         $data = $controller(Request::create('/', 'POST', [
-            'query' => 'query { testResolvers { name, typeField, typeFieldWithClosure, missingType { name } } }'
+            'query' => 'query {
+                testResolvers {
+                    name,
+                    typeField,
+                    typeFieldWithClosure,
+                    typeFieldWithEnum,
+                    missingType {
+                        name
+                    }
+                }
+            }'
         ]));
 
         $this->assertSame(
@@ -41,18 +51,21 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
                             'name' => 'Thing 1',
                             'typeField' => 'typeField value',
                             'typeFieldWithClosure' => 'typeFieldWithClosure value',
+                            'typeFieldWithEnum' => 'foo',
                             'missingType' => null,
                         ],
                         [
                             'name' => 'Thing 2',
                             'typeField' => 'typeField value',
                             'typeFieldWithClosure' => 'typeFieldWithClosure value',
+                            'typeFieldWithEnum' => 'foo',
                             'missingType' => null,
                         ],
                         [
                             'name' => 'Thing 3',
                             'typeField' => 'typeField value',
                             'typeFieldWithClosure' => 'typeFieldWithClosure value',
+                            'typeFieldWithEnum' => 'foo',
                             'missingType' => [
                                 'name' => 'Sub Thing',
                             ],
