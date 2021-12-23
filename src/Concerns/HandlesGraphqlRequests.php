@@ -186,6 +186,10 @@ trait HandlesGraphqlRequests
             ?? $this->fieldFromObject($source, $args, $context, $info);
 
         return call(static function () use ($field, $source, $args, $context, $info) {
+            if (function_exists('enum_exists') && $field instanceof \BackedEnum) {
+                return $field->value;
+            }
+
             return $field instanceof \Closure
                 ? $field($source, $args, $context, $info)
                 : $field;

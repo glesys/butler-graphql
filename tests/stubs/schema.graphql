@@ -34,6 +34,7 @@ type Thing {
     name: String!
     typeField: String!
     typeFieldWithClosure: String!
+    typeFieldWithEnum: String!
     missingType: SubThing
     dataLoaded: String!
     dataLoadedByKey: String!
