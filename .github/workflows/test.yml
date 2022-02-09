@@ -6,14 +6,8 @@ jobs:
     name: Testing with Laravel ${{ matrix.laravel }} and PHP ${{ matrix.php }}
     strategy:
         matrix:
-            php: [7.2.5, 7.3, 7.4]
-            laravel: [5.6.*, 5.7.*, 5.8.*, ^6.0, ^7.0, ^8.0]
-            exclude:
-                - laravel: ^8.0
-                  php: 7.2.5
-            include:
-                - laravel: ^8.0
-                  php: 8.0
+            php: [8.0, 8.1]
+            laravel: [^9.0]
     steps:
       - uses: actions/checkout@v2
 
