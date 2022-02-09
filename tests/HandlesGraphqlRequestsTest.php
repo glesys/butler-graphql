@@ -270,7 +270,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
             'query' => 'query { throwValidationException }'
         ]));
 
-        $this->assertSame('The given data was invalid.', Arr::get($data, 'errors.0.message'));
+        $this->assertSame('The foo field is required.', Arr::get($data, 'errors.0.message'));
         $this->assertSame('validation', Arr::get($data, 'errors.0.extensions.category'));
         $this->assertSame(['foo' => ['The foo field is required.']], Arr::get($data, 'errors.0.extensions.validation'));
     }
