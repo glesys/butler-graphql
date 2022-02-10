@@ -67,7 +67,7 @@ class GraphqlController extends Controller
 5. Add a route for your GraphQL API endpoint.
 
 ```php
-$router->match(['get', 'post'], '/graphql', GraphqlController::class);
+$router->post('/graphql', GraphqlController::class);
 ```
 
 6. Use something like [GraphiQL](https://github.com/graphql/graphiql) or [Insomnia](https://insomnia.rest/) to interact with your GraphQL API.
