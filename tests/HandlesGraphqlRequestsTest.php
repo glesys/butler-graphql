@@ -35,7 +35,6 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
                     name,
                     typeField,
                     typeFieldWithClosure,
-                    typeFieldWithEnum,
                     missingType {
                         name
                     }
@@ -51,25 +50,60 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
                             'name' => 'Thing 1',
                             'typeField' => 'typeField value',
                             'typeFieldWithClosure' => 'typeFieldWithClosure value',
-                            'typeFieldWithEnum' => 'foo',
                             'missingType' => null,
                         ],
                         [
                             'name' => 'Thing 2',
                             'typeField' => 'typeField value',
                             'typeFieldWithClosure' => 'typeFieldWithClosure value',
-                            'typeFieldWithEnum' => 'foo',
                             'missingType' => null,
                         ],
                         [
                             'name' => 'Thing 3',
                             'typeField' => 'typeField value',
                             'typeFieldWithClosure' => 'typeFieldWithClosure value',
-                            'typeFieldWithEnum' => 'foo',
                             'missingType' => [
                                 'name' => 'Sub Thing',
                             ],
                         ],
+                    ],
+                ],
+            ],
+            $data
+        );
+    }
+
+    public function test_enum_resolvers()
+    {
+        if (PHP_VERSION_ID < 80100) {
+            $this->markTestSkipped("Enums not supported in current php version.");
+        }
+
+        $this->app->config->set('butler.graphql.include_debug_message', true);
+        $this->app->config->set('butler.graphql.include_trace', true);
+
+        $controller = $this->app->make(GraphqlController::class);
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'query {
+                testEnumResolvers {
+                    fieldBackedByEnum
+                    fieldBackedByResolverForEnum
+                }
+            }'
+        ]));
+
+        $this->assertSame(
+            [
+                'data' => [
+                    'testEnumResolvers' => [
+                        [
+                            'fieldBackedByEnum' => 'foo',
+                            'fieldBackedByResolverForEnum' => 'FOO:foo',
+                        ],
+                        [
+                            'fieldBackedByEnum' => 'bar',
+                            'fieldBackedByResolverForEnum' => 'BAR:bar',
+                        ]
                     ],
                 ],
             ],

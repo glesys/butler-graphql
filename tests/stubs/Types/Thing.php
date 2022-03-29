@@ -1,4 +1,4 @@
-<?php // phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
+<?php
 
 namespace Butler\Graphql\Tests\Types;
 
@@ -7,10 +7,6 @@ use Butler\Graphql\Tests\TypedThing;
 use Closure;
 use Exception;
 use GraphQL\Type\Definition\ResolveInfo;
-
-if (PHP_VERSION_ID >= 80100) {
-    require __DIR__ . '/../enums.php';
-}
 
 class Thing
 {
@@ -119,15 +115,6 @@ class Thing
         return function () {
             return 'typeFieldWithClosure value';
         };
-    }
-
-    public function typeFieldWithEnum($source, $args, $context, ResolveInfo $info)
-    {
-        if (function_exists('enum_exists') && enum_exists(\ThingStatus::class)) {
-            return \ThingStatus::FOO;
-        }
-
-        return 'foo';
     }
 
     public function resolveTypeForAttachment($source, $context, ResolveInfo $info)

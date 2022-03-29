@@ -183,13 +183,10 @@ trait HandlesGraphqlRequests
     {
         $field = $this->fieldFromResolver($source, $args, $context, $info)
             ?? $this->fieldFromArray($source, $args, $context, $info)
-            ?? $this->fieldFromObject($source, $args, $context, $info);
+            ?? $this->fieldFromObject($source, $args, $context, $info)
+            ?? $this->fieldFromEnum($source, $args, $context, $info);
 
         return call(static function () use ($field, $source, $args, $context, $info) {
-            if (function_exists('enum_exists') && $field instanceof \BackedEnum) {
-                return $field->value;
-            }
-
             return $field instanceof \Closure
                 ? $field($source, $args, $context, $info)
                 : $field;
@@ -241,6 +238,13 @@ trait HandlesGraphqlRequests
                     return is_null($value);
                 })
                 ->first();
+        }
+    }
+
+    public function fieldFromEnum($source, $args, $context, ResolveInfo $info)
+    {
+        if (function_exists('enum_exists') && $source instanceof \BackedEnum) {
+            return $source->value;
         }
     }
 
