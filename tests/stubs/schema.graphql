@@ -1,5 +1,6 @@
 type Query {
     testResolvers: [Thing]
+    testEnumResolvers: [EnumThing]
     dataLoader: [Thing]
     dataLoaderWithCollections: [Thing!]!
     throwError: String!
@@ -34,7 +35,6 @@ type Thing {
     name: String!
     typeField: String!
     typeFieldWithClosure: String!
-    typeFieldWithEnum: String!
     missingType: SubThing
     dataLoaded: String!
     dataLoadedByKey: String!
@@ -46,6 +46,11 @@ type Thing {
     attachment: Attachment
     media: Media
     subThings: [SubThing!]
+}
+
+type EnumThing {
+    fieldBackedByEnum: String!
+    fieldBackedByResolverForEnum: String!
 }
 
 type SubThing {
