@@ -15,7 +15,9 @@ use GraphQL\Language\AST\InterfaceTypeDefinitionNode;
 use GraphQL\Language\AST\TypeDefinitionNode;
 use GraphQL\Language\AST\UnionTypeDefinitionNode;
 use GraphQL\Language\Parser;
+use GraphQL\Type\Definition\LeafType;
 use GraphQL\Type\Definition\ResolveInfo;
+use GraphQL\Type\Definition\WrappingType;
 use GraphQL\Type\Schema;
 use GraphQL\Utils\BuildSchema;
 use Illuminate\Contracts\Debug\ExceptionHandler;
@@ -183,8 +185,11 @@ trait HandlesGraphqlRequests
     {
         $field = $this->fieldFromResolver($source, $args, $context, $info)
             ?? $this->fieldFromArray($source, $args, $context, $info)
-            ?? $this->fieldFromObject($source, $args, $context, $info)
-            ?? $this->fieldFromEnum($source, $args, $context, $info);
+            ?? $this->fieldFromObject($source, $args, $context, $info);
+
+        if ($this->fieldIsBackedEnum($field) && $this->returnTypeIsLeaf($info)) {
+            $field = $field->value;
+        }
 
         return call(static function () use ($field, $source, $args, $context, $info) {
             return $field instanceof \Closure
@@ -241,11 +246,9 @@ trait HandlesGraphqlRequests
         }
     }
 
-    public function fieldFromEnum($source, $args, $context, ResolveInfo $info)
+    public function fieldIsBackedEnum($field): bool
     {
-        if (function_exists('enum_exists') && $source instanceof \BackedEnum) {
-            return $source->value;
-        }
+        return function_exists('enum_exists') && $field instanceof \BackedEnum;
     }
 
     public function typeFromArray($source, $context, ResolveInfo $info)
@@ -339,6 +342,15 @@ trait HandlesGraphqlRequests
     public function typesNamespace(): string
     {
         return $this->namespace() . 'Types\\';
+    }
+
+    public function returnTypeIsLeaf(ResolveInfo $info): bool
+    {
+         $returnType = $info->returnType instanceof WrappingType
+            ? $info->returnType->getWrappedType(true)
+            : $info->returnType;
+
+         return $returnType instanceof LeafType;
     }
 
     public function decorateResponse(array $data): array

@@ -11,8 +11,8 @@ class TestEnumResolvers
     public function __invoke($root, $args, $context)
     {
         return [
-            \ThingStatus::FOO,
-            \ThingStatus::BAR,
+            ['name' => 'Enum Thing 1', 'enum' => \ThingEnum::FOO],
+            ['name' => 'Enum Thing 2', 'enum' => \ThingEnum::BAR],
         ];
     }
 }
