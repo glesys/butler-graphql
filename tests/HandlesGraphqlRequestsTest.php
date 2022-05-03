@@ -86,8 +86,14 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
         $data = $controller(Request::create('/', 'POST', [
             'query' => 'query {
                 testEnumResolvers {
-                    fieldBackedByEnum
-                    fieldBackedByResolverForEnum
+                    name
+                    enum
+                    typeFieldEnum
+                    typeFieldString
+                    subEnum {
+                        name
+                        value
+                    }
                 }
             }'
         ]));
@@ -97,12 +103,18 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
                 'data' => [
                     'testEnumResolvers' => [
                         [
-                            'fieldBackedByEnum' => 'foo',
-                            'fieldBackedByResolverForEnum' => 'FOO:foo',
+                            'name' => 'Enum Thing 1',
+                            'enum' => 'foo',
+                            'typeFieldEnum' => 'foo',
+                            'typeFieldString' => 'FOO:foo',
+                            'subEnum' => ['name' => 'ZAB', 'value' => 'baz'],
                         ],
                         [
-                            'fieldBackedByEnum' => 'bar',
-                            'fieldBackedByResolverForEnum' => 'BAR:bar',
+                            'name' => 'Enum Thing 2',
+                            'enum' => 'bar',
+                            'typeFieldEnum' => 'bar',
+                            'typeFieldString' => 'BAR:bar',
+                            'subEnum' => ['name' => 'ZAB', 'value' => 'baz'],
                         ]
                     ],
                 ],

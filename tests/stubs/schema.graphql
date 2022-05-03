@@ -49,13 +49,21 @@ type Thing {
 }
 
 type EnumThing {
-    fieldBackedByEnum: String!
-    fieldBackedByResolverForEnum: String!
+    name: String!
+    enum: String!
+    typeFieldEnum: String!
+    typeFieldString: String!
+    subEnum: SubEnum!
 }
 
 type SubThing {
     name: String!
     thing: Thing
+}
+
+type SubEnum {
+    name: String!
+    value: String!
 }
 
 type AnotherThing {
