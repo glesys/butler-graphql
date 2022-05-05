@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [8.0.1] - 2022-05-05
+
 ### Added
 - Cast backed enum to its value when return type is a "leaf" (enum or scalar).
 
