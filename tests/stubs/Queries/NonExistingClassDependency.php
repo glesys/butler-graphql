@@ -10,6 +10,6 @@ class NonExistingClassDependency
 
     public function __invoke($root, $args, $context)
     {
-        throw new \Exception("This query is used for testing. It should fail in the constructor and never reach the invoke.");
+        throw new \Exception('This query is used for testing. It should fail in the constructor and never reach the invoke.');
     }
 }

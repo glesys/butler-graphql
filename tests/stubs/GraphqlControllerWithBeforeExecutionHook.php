@@ -3,8 +3,8 @@
 namespace Butler\Graphql\Tests;
 
 use Butler\Graphql\Concerns\HandlesGraphqlRequests;
-use GraphQL\Type\Schema;
 use GraphQL\Language\AST\DocumentNode;
+use GraphQL\Type\Schema;
 
 class GraphqlControllerWithBeforeExecutionHook
 {

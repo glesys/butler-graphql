@@ -2,6 +2,7 @@
 
 namespace Butler\Graphql\Concerns;
 
+use function Amp\call;
 use Butler\Graphql\DataLoader;
 use Exception;
 use GraphQL\Error\DebugFlag;
@@ -26,8 +27,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-
-use function Amp\call;
 
 trait HandlesGraphqlRequests
 {
@@ -91,7 +90,6 @@ trait HandlesGraphqlRequests
         string $operationName = null,
         $variables = null
     ): void {
-        return;
     }
 
     public function errorFormatter(GraphqlError $graphqlError)
@@ -160,6 +158,7 @@ trait HandlesGraphqlRequests
         if ($this->shouldDecorateWithResolveType($typeDefinitionNode)) {
             $config['resolveType'] = [$this, 'resolveType'];
         }
+
         return $config;
     }
 
@@ -178,6 +177,7 @@ trait HandlesGraphqlRequests
         if (config('butler.graphql.include_trace')) {
             $flags |= DebugFlag::INCLUDE_TRACE;
         }
+
         return $flags;
     }
 
@@ -346,11 +346,11 @@ trait HandlesGraphqlRequests
 
     public function returnTypeIsLeaf(ResolveInfo $info): bool
     {
-         $returnType = $info->returnType instanceof WrappingType
-            ? $info->returnType->getWrappedType(true)
-            : $info->returnType;
+        $returnType = $info->returnType instanceof WrappingType
+           ? $info->returnType->getWrappedType(true)
+           : $info->returnType;
 
-         return $returnType instanceof LeafType;
+        return $returnType instanceof LeafType;
     }
 
     public function decorateResponse(array $data): array
@@ -358,6 +358,7 @@ trait HandlesGraphqlRequests
         if (app()->bound('debugbar') && app('debugbar')->isEnabled()) {
             $data['debug'] = app('debugbar')->getData();
         }
+
         return $data;
     }
 

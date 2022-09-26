@@ -2,12 +2,11 @@
 
 namespace Butler\Graphql\Concerns;
 
+use function Amp\call;
 use Amp\Loop;
+use function Amp\Promise\all;
 use Closure;
 use Exception;
-
-use function Amp\call;
-use function Amp\Promise\all;
 
 trait AssertsPromises
 {
@@ -36,6 +35,7 @@ trait AssertsPromises
 
         if ($expectedValue instanceof Closure) {
             $this->assertTrue($expectedValue($result));
+
             return;
         }
 

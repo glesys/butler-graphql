@@ -12,7 +12,7 @@ class ResolveUnionFromType
                 'name' => 'Video 1',
                 'size' => 1024,
                 'length' => 3600,
-            ]
+            ],
         ];
     }
 }

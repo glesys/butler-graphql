@@ -1,4 +1,6 @@
-<?php // phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
+<?php
+
+// phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
 
 namespace Butler\Graphql\Tests\Queries;
 
