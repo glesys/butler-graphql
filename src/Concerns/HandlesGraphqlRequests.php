@@ -21,6 +21,7 @@ use GraphQL\Type\Definition\WrappingType;
 use GraphQL\Type\Schema;
 use GraphQL\Utils\BuildSchema;
 use Illuminate\Contracts\Debug\ExceptionHandler;
+use Illuminate\Database\Eloquent\MissingAttributeException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -223,7 +224,11 @@ trait HandlesGraphqlRequests
         if (is_array($source) || $source instanceof \ArrayAccess) {
             return collect($this->propertyNames($info))
                 ->map(function ($propertyName) use ($source) {
-                    return $source[$propertyName] ?? null;
+                    try {
+                        return $source[$propertyName] ?? null;
+                    } catch (MissingAttributeException) {
+                        return null;
+                    }
                 })
                 ->reject(function ($value) {
                     return is_null($value);
@@ -237,7 +242,11 @@ trait HandlesGraphqlRequests
         if (is_object($source)) {
             return collect($this->propertyNames($info))
                 ->map(function ($propertyName) use ($source) {
-                    return $source->{$propertyName} ?? null;
+                    try {
+                        return $source->{$propertyName} ?? null;
+                    } catch (MissingAttributeException) {
+                        return null;
+                    }
                 })
                 ->reject(function ($value) {
                     return is_null($value);

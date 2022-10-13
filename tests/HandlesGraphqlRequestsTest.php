@@ -9,6 +9,7 @@ use GraphQL\Error\SyntaxError;
 use GraphQL\Language\AST\DocumentNode;
 use GraphQL\Type\Schema;
 use Illuminate\Contracts\Debug\ExceptionHandler;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Mockery;
@@ -742,6 +743,31 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
         $this->assertInstanceOf(DocumentNode::class, $controller->query);
         $this->assertSame('fooBar', $controller->operationName);
         $this->assertEquals(['foo' => 'bar'], $controller->variables);
+    }
+
+    public function test_eloquent_strictness()
+    {
+        if (! method_exists(Model::class, 'preventAccessingMissingAttributes')) {
+            $this->markTestSkipped('Eloquent strictness not supported in current laravel version.');
+        }
+
+        $controller = $this->app->make(GraphqlControllerWithEloquentStrictness::class);
+
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'query { strictEloquentModel { id isStrict } }',
+        ]));
+
+        $this->assertSame(
+            [
+                'data' => [
+                    'strictEloquentModel' => [
+                        'id' => '100',
+                        'isStrict' => true,
+                    ],
+                ],
+            ],
+            $data
+        );
     }
 
     public function test_custom_schema()
