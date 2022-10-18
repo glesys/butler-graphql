@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [8.1.0] - 2022-10-18
+
 ### Added
 - Support for [eloquent strictness](https://laravel.com/docs/9.x/eloquent#configuring-eloquent-strictness).
 
