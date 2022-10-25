@@ -1,6 +1,7 @@
 type Query {
     testResolvers: [Thing]
     testEnumResolvers: [EnumThing]
+    testFieldResolver: [NullingType!]!
     dataLoader: [Thing]
     dataLoaderWithCollections: [Thing!]!
     throwError: String!
@@ -22,6 +23,10 @@ type Query {
 
 type Mutation {
     testMutation(input: TestMutationInput): TestMutationPayload
+}
+
+type NullingType {
+    message: String
 }
 
 input TestMutationInput {

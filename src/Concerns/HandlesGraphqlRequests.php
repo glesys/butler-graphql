@@ -184,9 +184,12 @@ trait HandlesGraphqlRequests
 
     public function resolveField($source, $args, $context, ResolveInfo $info)
     {
-        $field = $this->fieldFromResolver($source, $args, $context, $info)
-            ?? $this->fieldFromArray($source, $args, $context, $info)
-            ?? $this->fieldFromObject($source, $args, $context, $info);
+        if ($resolver = $this->resolverForField($info)) {
+            $field = $resolver($source, $args, $context, $info);
+        } else {
+            $field = $this->fieldFromArray($source, $args, $context, $info)
+                ?? $this->fieldFromObject($source, $args, $context, $info);
+        }
 
         if ($this->fieldIsBackedEnum($field) && $this->returnTypeIsLeaf($info)) {
             $field = $field->value;
@@ -207,14 +210,14 @@ trait HandlesGraphqlRequests
             ?? $this->typeFromBaseClass($source, $context, $info);
     }
 
-    public function fieldFromResolver($source, $args, $context, ResolveInfo $info)
+    public function resolverForField(ResolveInfo $info)
     {
         $className = $this->resolveClassName($info);
         $methodName = $this->resolveFieldMethodName($info);
 
         if ($resolver = $this->make($className)) {
             if (method_exists($resolver, $methodName)) {
-                return $resolver->{$methodName}($source, $args, $context, $info);
+                return fn (...$args) => $resolver->{$methodName}(...$args);
             }
         }
     }
