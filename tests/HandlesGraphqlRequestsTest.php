@@ -786,4 +786,30 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
             $data
         );
     }
+
+    public function test_custom_resolver_skips_array_and_object_resolving()
+    {
+        $controller = $this->app->make(GraphqlController::class);
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'query {
+                testFieldResolver {
+                    message
+                }
+            }'
+        ]));
+
+        $this->assertSame(
+            [
+                'data' => [
+                    'testFieldResolver' => [
+                        ['message' => null],
+                        ['message' => null],
+                        ['message' => null],
+                        ['message' => null],
+                    ]
+                ],
+            ],
+            $data
+        );
+    }
 }
