@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [9.0.0] - 2022-10-26
+
 ### Changed
 - **BREAKING** Fields that uses a resolver method are now exclusively resolved using that method. Previously, if a resolver method returned `null`, the library would continue to try and resolve the field using the built in array and object resolvers.
 
