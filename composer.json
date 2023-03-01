@@ -40,15 +40,15 @@
     "license": "MIT",
     "name": "glesys/butler-graphql",
     "require": {
-        "php": "^8.0.2",
+        "php": "^8.1",
         "amphp/amp": "^2.5",
-        "illuminate/support": "^9.0",
+        "illuminate/support": "^10.0",
         "webonyx/graphql-php": "^14.3.0"
     },
     "require-dev": {
-        "graham-campbell/testbench": "^5.7",
+        "graham-campbell/testbench": "^6.0",
         "mockery/mockery": "^1.4.4",
-        "phpunit/phpunit": "^9.5.10",
+        "phpunit/phpunit": "^10.0",
         "squizlabs/php_codesniffer": "^3.6"
     },
     "suggest": {

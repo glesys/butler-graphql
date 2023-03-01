@@ -7,7 +7,7 @@ use GrahamCampbell\TestBench\AbstractPackageTestCase;
 
 abstract class AbstractTestCase extends AbstractPackageTestCase
 {
-    protected function getServiceProviderClass()
+    protected static function getServiceProviderClass(): string
     {
         return ServiceProvider::class;
     }
