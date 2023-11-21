@@ -1,0 +1,7 @@
+extend type Query {
+    extendedQuery: ExtendedType!
+}
+
+type ExtendedType {
+    field1: String!
+}

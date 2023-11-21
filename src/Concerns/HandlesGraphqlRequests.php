@@ -20,6 +20,7 @@ use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\WrappingType;
 use GraphQL\Type\Schema;
 use GraphQL\Utils\BuildSchema;
+use GraphQL\Utils\SchemaExtender;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Database\Eloquent\MissingAttributeException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -54,6 +55,10 @@ trait HandlesGraphqlRequests
 
         try {
             $schema = BuildSchema::build($this->schema(), [$this, 'decorateTypeConfig']);
+
+            foreach ($this->schemaExtensions() as $extension) {
+                $schema = SchemaExtender::extend($schema, Parser::parse($extension), [], [$this, 'decorateTypeConfig']);
+            }
 
             $source = Parser::parse($query);
 
@@ -154,6 +159,24 @@ trait HandlesGraphqlRequests
     public function schemaPath()
     {
         return config('butler.graphql.schema');
+    }
+
+    public function schemaExtensions()
+    {
+        $path = Str::finish($this->schemaExtensionsPath(), DIRECTORY_SEPARATOR);
+        $glob = $this->schemaExtensionsGlob();
+
+        return collect(glob("{$path}{$glob}"))->map(file_get_contents(...))->toArray();
+    }
+
+    public function schemaExtensionsPath()
+    {
+        return config('butler.graphql.schema_extensions_path');
+    }
+
+    public function schemaExtensionsGlob()
+    {
+        return config('butler.graphql.schema_extensions_glob');
     }
 
     public function decorateTypeConfig(array $config, TypeDefinitionNode $typeDefinitionNode)

@@ -1,0 +1,3 @@
+extend type ExtendedType {
+    field2: String!
+}
