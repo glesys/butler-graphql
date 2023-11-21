@@ -812,4 +812,31 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
             $data
         );
     }
+
+    public function test_extending_schema()
+    {
+        $this->app->config->set('butler.graphql.schema_extensions_path', __DIR__ . '/stubs/schema-extensions');
+
+        $controller = $this->app->make(GraphqlController::class);
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'query {
+                extendedQuery {
+                    field1
+                    field2
+                }
+            }'
+        ]));
+
+        $this->assertSame(
+            [
+                'data' => [
+                    'extendedQuery' => [
+                        'field1' => 'This is field 1',
+                        'field2' => 'This is field 2',
+                    ]
+                ],
+            ],
+            $data
+        );
+    }
 }

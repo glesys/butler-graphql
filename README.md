@@ -281,6 +281,33 @@ Butler GraphQL will make sure that `loadComments` is only called once.
 
 If you don't want to use `Closure::fromCallable(...)` you can change the accessibility of `loadComments` to `public`.
 
+## Splitting a Large Schema File Into Multiple Files
+
+Butler GraphQL lets you easily split certain parts of your GraphQL schema file to separate files.
+
+*schema.grapqhl*
+```graphql
+type Query {
+    users: [User!]!
+}
+
+type User {
+    id: ID!
+    username: String!
+}
+```
+
+*schema-user-attributes.grapqhl*
+```graphql
+extend type User {
+    firstName: String
+    lastName: String
+    email: String!
+}
+```
+
+*NOTE:* A base schema is always required and it's recommended to stay away from multiple levels of extensions.
+
 ## Customize
 
 There's no real need to configure Butler GraphQL. It's designed with *convention over configuration* in mind and should be ready to go without any configuration.
@@ -295,6 +322,11 @@ php artisan vendor:publish
 
 - `BUTLER_GRAPHQL_SCHEMA` – Defaults to `app_path('Http/Graphql/schema.graphql')`.
 - `BUTLER_GRAPHQL_NAMESPACE` – Defaults to `'App\\Http\\Graphql\\'`.
+
+### Change the Path and Pattern for Partial Schema Files
+
+- `BUTLER_GRAPHQL_SCHEMA_EXTENSIONS_PATH` – Defaults to `app_path('Http/Graphql/')`.
+- `BUTLER_GRAPHQL_SCHEMA_EXTENSIONS_GLOB` – Defaults to `'schema-*.graphql'`.
 
 ### Debugging
 
