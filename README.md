@@ -285,7 +285,7 @@ If you don't want to use `Closure::fromCallable(...)` you can change the accessi
 
 Butler GraphQL lets you easily split certain parts of your GraphQL schema file to separate files.
 
-*schema.grapqhl*
+*schema.graphql*
 ```graphql
 type Query {
     users: [User!]!
@@ -297,7 +297,7 @@ type User {
 }
 ```
 
-*schema-user-attributes.grapqhl*
+*schema-user-attributes.graphql*
 ```graphql
 extend type User {
     firstName: String
