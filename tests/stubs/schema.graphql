@@ -4,6 +4,7 @@ type Query {
     testFieldResolver: [NullingType!]!
     dataLoader: [Thing]
     dataLoaderWithCollections: [Thing!]!
+    throwAuthorizationException: String!
     throwError: String!
     throwException: String!
     throwHttpException(code: Int = 400): String!

@@ -21,6 +21,7 @@ use GraphQL\Type\Definition\WrappingType;
 use GraphQL\Type\Schema;
 use GraphQL\Utils\BuildSchema;
 use GraphQL\Utils\SchemaExtender;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Database\Eloquent\MissingAttributeException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -108,6 +109,16 @@ trait HandlesGraphqlRequests
         $this->reportException(
             $throwable instanceof Exception ? $throwable : $graphqlError
         );
+
+        if ($throwable instanceof AuthorizationException) {
+            return array_merge($formattedError, [
+                'message' => $throwable->getMessage(),
+                'extensions' => [
+                    'category' => 'client',
+                    'code' => $throwable->status() ?: 403,
+                ],
+            ]);
+        }
 
         if (
             $throwable instanceof HttpException &&

@@ -289,6 +289,18 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
         $this->assertSame('internal', Arr::get($data, 'errors.0.extensions.category'));
     }
 
+    public function test_authorization_error_is_formatted()
+    {
+        $controller = $this->app->make(GraphqlController::class);
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => '{ throwAuthorizationException }',
+        ]));
+
+        $this->assertSame('This action is unauthorized.', data_get($data, 'errors.0.message'));
+        $this->assertSame('client', data_get($data, 'errors.0.extensions.category'));
+        $this->assertSame(403, data_get($data, 'errors.0.extensions.code'));
+    }
+
     public function test_http_client_error_is_formatted()
     {
         $controller = $this->app->make(GraphqlController::class);
