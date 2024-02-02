@@ -174,10 +174,16 @@ trait HandlesGraphqlRequests
 
     public function schemaExtensions()
     {
-        $path = Str::finish($this->schemaExtensionsPath(), DIRECTORY_SEPARATOR);
+        $path = $this->schemaExtensionsPath();
         $glob = $this->schemaExtensionsGlob();
 
-        return collect(glob("{$path}{$glob}"))->map(file_get_contents(...))->toArray();
+        if ($path && $glob) {
+            $path = Str::finish($path, DIRECTORY_SEPARATOR);
+
+            return collect(glob("{$path}{$glob}"))->map(file_get_contents(...))->toArray();
+        }
+
+        return [];
     }
 
     public function schemaExtensionsPath()
