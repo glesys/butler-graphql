@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Laravel pint.
+
 ### Changed
 - **BREAKING**: Require Laravel 11 and PHP 8.2.
 

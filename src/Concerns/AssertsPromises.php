@@ -36,6 +36,7 @@ trait AssertsPromises
 
         if ($expectedValue instanceof Closure) {
             $this->assertTrue($expectedValue($result));
+
             return;
         }
 

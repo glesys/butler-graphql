@@ -40,7 +40,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
                         name
                     }
                 }
-            }'
+            }',
         ]));
 
         $this->assertSame(
@@ -92,7 +92,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
                         value
                     }
                 }
-            }'
+            }',
         ]));
 
         $this->assertSame(
@@ -112,7 +112,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
                             'typeFieldEnum' => 'bar',
                             'typeFieldString' => 'BAR:bar',
                             'subEnum' => ['name' => 'ZAB', 'value' => 'baz'],
-                        ]
+                        ],
                     ],
                 ],
             ],
@@ -151,7 +151,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
                     sharedDataLoaderOne
                     sharedDataLoaderTwo
                 }
-            }'
+            }',
         ]));
 
         $this->assertSame(
@@ -195,7 +195,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
 
         $controller = $this->app->make(GraphqlController::class);
         $data = $controller(Request::create('/', 'POST', [
-            'query' => 'query { dataLoaderWithCollections { name subThings { name } } }'
+            'query' => 'query { dataLoaderWithCollections { name subThings { name } } }',
         ]));
 
         $this->assertSame(
@@ -220,7 +220,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
     {
         $controller = $this->app->make(GraphqlController::class);
         $data = $controller(Request::create('/', 'POST', [
-            'query' => 'query { throwException }'
+            'query' => 'query { throwException }',
         ]));
 
         $this->assertFalse(Arr::has($data, 'errors.0.debugMessage'), 'debugMessage should not be included');
@@ -238,7 +238,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
 
         $controller = $this->app->make(GraphqlController::class);
         $data = $controller(Request::create('/', 'POST', [
-            'query' => 'query { throwException }'
+            'query' => 'query { throwException }',
         ]));
     }
 
@@ -251,7 +251,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
 
         $controller = $this->app->make(GraphqlController::class);
         $data = $controller(Request::create('/', 'POST', [
-            'query' => 'query { throwError }'
+            'query' => 'query { throwError }',
         ]));
     }
 
@@ -261,7 +261,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
 
         $controller = $this->app->make(GraphqlController::class);
         $data = $controller(Request::create('/', 'POST', [
-            'query' => 'query { throwException }'
+            'query' => 'query { throwException }',
         ]));
 
         $this->assertFalse(Arr::has($data, 'errors.0.trace'), 'trace should not be included');
@@ -276,7 +276,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
 
         $controller = $this->app->make(GraphqlController::class);
         $data = $controller(Request::create('/', 'POST', [
-            'query' => 'query { throwException }'
+            'query' => 'query { throwException }',
         ]));
 
         $this->assertFalse(Arr::has($data, 'errors.0.debugMessage'), 'debugMessage should not be included');
@@ -301,7 +301,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
     {
         $controller = $this->app->make(GraphqlController::class);
         $data = $controller(Request::create('/', 'POST', [
-            'query' => 'query { throwHttpException(code: 400) }'
+            'query' => 'query { throwHttpException(code: 400) }',
         ]));
 
         $this->assertSame('Bad Request', Arr::get($data, 'errors.0.message'));
@@ -313,7 +313,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
     {
         $controller = $this->app->make(GraphqlController::class);
         $data = $controller(Request::create('/', 'POST', [
-            'query' => 'query { throwHttpException(code: 500) }'
+            'query' => 'query { throwHttpException(code: 500) }',
         ]));
 
         $this->assertSame('Internal server error', Arr::get($data, 'errors.0.message'));
@@ -323,7 +323,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
     {
         $controller = $this->app->make(GraphqlController::class);
         $data = $controller(Request::create('/', 'POST', [
-            'query' => 'query { throwModelNotFoundException }'
+            'query' => 'query { throwModelNotFoundException }',
         ]));
 
         $this->assertSame('Dummy not found.', Arr::get($data, 'errors.0.message'));
@@ -335,7 +335,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
     {
         $controller = $this->app->make(GraphqlController::class);
         $data = $controller(Request::create('/', 'POST', [
-            'query' => 'query { throwValidationException }'
+            'query' => 'query { throwValidationException }',
         ]));
 
         $this->assertSame('The foo field is required.', Arr::get($data, 'errors.0.message'));
@@ -352,7 +352,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
 
         $controller = $this->app->make(GraphqlControllerWithInvalidSchema::class);
         $controller(Request::create('/', 'POST', [
-            'query' => 'hello world'
+            'query' => 'hello world',
         ]));
     }
 
@@ -365,7 +365,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
 
         $controller = $this->app->make(GraphqlController::class);
         $controller(Request::create('/', 'POST', [
-            'query' => 'hello world'
+            'query' => 'hello world',
         ]));
     }
 
@@ -398,7 +398,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
                 ],
                 'debug' => [
                     'queries' => 10,
-                ]
+                ],
             ],
             $data
         );
@@ -411,7 +411,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
 
         $controller = $this->app->make(GraphqlController::class);
         $data = $controller(Request::create('/', 'POST', [
-            'query' => 'query { nonExistingClassDependency }'
+            'query' => 'query { nonExistingClassDependency }',
         ]));
 
         $this->assertContains(data_get($data, 'errors.0.debugMessage'), [
@@ -455,7 +455,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
                         length
                     }
                 }
-            }'
+            }',
         ]));
 
         $this->assertSame(
@@ -507,7 +507,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
                         name
                     }
                 }
-            }'
+            }',
         ]));
 
         $this->assertSame(
@@ -550,7 +550,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
                         length
                     }
                 }
-            }'
+            }',
         ]));
 
         $this->assertSame(
@@ -615,7 +615,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
                         }
                     }
                 }
-            }'
+            }',
         ]));
 
         $this->assertSame(
@@ -645,7 +645,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
                     id
                     requiredFlag
                 }
-            }'
+            }',
         ]));
 
         $this->assertSame(
@@ -675,7 +675,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
                     camelCase
                     snake_case
                 }
-            }'
+            }',
         ]));
 
         $this->assertSame(
@@ -703,6 +703,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
             $data
         );
     }
+
     public function test_nested_collections()
     {
         $this->app->config->set('butler.graphql.include_debug_message', true);
@@ -716,7 +717,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
                         name
                     }
                 }
-            }'
+            }',
         ]));
 
         $this->assertSame(
@@ -728,7 +729,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
                             'subThings' => [
                                 ['name' => 'thing – Sub Thing 1'],
                                 ['name' => 'thing – Sub Thing 2'],
-                            ]
+                            ],
                         ],
                     ],
                 ],
@@ -782,7 +783,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
     {
         $controller = $this->app->make(GraphqlControllerWithCustomSchema::class);
         $data = $controller(Request::create('/', 'POST', [
-            'query' => 'query { foo }'
+            'query' => 'query { foo }',
         ]));
 
         $this->assertSame(
@@ -803,7 +804,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
                 testFieldResolver {
                     message
                 }
-            }'
+            }',
         ]));
 
         $this->assertSame(
@@ -814,7 +815,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
                         ['message' => null],
                         ['message' => null],
                         ['message' => null],
-                    ]
+                    ],
                 ],
             ],
             $data
@@ -832,7 +833,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
                     field1
                     field2
                 }
-            }'
+            }',
         ]));
 
         $this->assertSame(
@@ -841,7 +842,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
                     'extendedQuery' => [
                         'field1' => 'This is field 1',
                         'field2' => 'This is field 2',
-                    ]
+                    ],
                 ],
             ],
             $data

@@ -40,7 +40,6 @@ trait HandlesGraphqlRequests
     /**
      * Invoke the Graphql request handler.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return array
      */
     public function __invoke(Request $request)
@@ -95,10 +94,10 @@ trait HandlesGraphqlRequests
     public function beforeExecutionHook(
         Schema $schema,
         DocumentNode $query,
-        string $operationName = null,
+        ?string $operationName = null,
         $variables = null
     ): void {
-        return;
+
     }
 
     public function errorFormatter(GraphqlError $graphqlError)
@@ -201,6 +200,7 @@ trait HandlesGraphqlRequests
         if ($this->shouldDecorateWithResolveType($typeDefinitionNode)) {
             $config['resolveType'] = [$this, 'resolveType'];
         }
+
         return $config;
     }
 
@@ -219,6 +219,7 @@ trait HandlesGraphqlRequests
         if (config('butler.graphql.include_trace')) {
             $flags |= DebugFlag::INCLUDE_TRACE;
         }
+
         return $flags;
     }
 
@@ -398,11 +399,11 @@ trait HandlesGraphqlRequests
 
     public function returnTypeIsLeaf(ResolveInfo $info): bool
     {
-         $returnType = $info->returnType instanceof WrappingType
-            ? $info->returnType->getWrappedType(true)
-            : $info->returnType;
+        $returnType = $info->returnType instanceof WrappingType
+           ? $info->returnType->getWrappedType(true)
+           : $info->returnType;
 
-         return $returnType instanceof LeafType;
+        return $returnType instanceof LeafType;
     }
 
     public function decorateResponse(array $data): array
@@ -410,6 +411,7 @@ trait HandlesGraphqlRequests
         if (app()->bound('debugbar') && app('debugbar')->isEnabled()) {
             $data['debug'] = app('debugbar')->getData();
         }
+
         return $data;
     }
 

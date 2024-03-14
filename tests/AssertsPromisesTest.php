@@ -64,9 +64,10 @@ class AssertsPromisesTest extends TestCase
         } catch (Exception $exception) {
             $this->assertEquals(
                 "Failed asserting that promise fulfills with a specified value.\n" .
-                "Failed asserting that 4 is identical to 5.",
+                'Failed asserting that 4 is identical to 5.',
                 $exception->getMessage()
             );
+
             return;
         }
 
@@ -84,6 +85,7 @@ class AssertsPromisesTest extends TestCase
                 'Failed asserting that promise fulfills. Promise was rejected: Provided value not an integer',
                 $exception->getMessage()
             );
+
             return;
         }
 
@@ -101,6 +103,7 @@ class AssertsPromisesTest extends TestCase
                 'Failed asserting that promise fulfills. Promise was rejected: foo bar',
                 $exception->getMessage()
             );
+
             return;
         }
 
@@ -109,7 +112,8 @@ class AssertsPromisesTest extends TestCase
 
     private function createTestObject(): TestCase
     {
-        return new class extends TestCase {
+        return new class extends TestCase
+        {
             use AssertsPromises;
 
             private $context;
@@ -124,6 +128,7 @@ class AssertsPromisesTest extends TestCase
                 return $this->context['loader'](function (array $numbers) {
                     return collect($numbers)->map(function ($base) {
                         throw_unless(is_int($base), RuntimeException::class, 'Provided value not an integer');
+
                         return pow($base, 2);
                     });
                 })->load($base);
