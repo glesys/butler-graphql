@@ -12,7 +12,7 @@ class DataLoaderWithCollections
             new TypedThing('Thing 1', collect([
                 ['name' => 'Thing 1'],
                 ['name' => 'Thing 2'],
-            ]))
+            ])),
         ]);
     }
 }

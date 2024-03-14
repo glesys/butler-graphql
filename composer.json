@@ -47,9 +47,9 @@
     },
     "require-dev": {
         "graham-campbell/testbench": "^6.0",
+        "laravel/pint": "^1.14",
         "mockery/mockery": "^1.4.4",
-        "phpunit/phpunit": "^10.0",
-        "squizlabs/php_codesniffer": "^3.6"
+        "phpunit/phpunit": "^10.0"
     },
     "suggest": {
         "barryvdh/laravel-debugbar": "View debug information in responses."

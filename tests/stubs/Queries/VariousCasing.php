@@ -17,7 +17,7 @@ class VariousCasing
                 'camel_case' => 'using camel_case',
                 'snake_case' => 'using snake_case',
             ],
-            (object)[
+            (object) [
                 'name' => 'Test 3',
                 'camel-case' => 'using camel-case',
                 'snake-case' => 'using snake-case',

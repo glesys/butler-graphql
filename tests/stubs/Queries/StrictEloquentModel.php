@@ -8,7 +8,8 @@ class StrictEloquentModel
 {
     public function __invoke($root, $args, $context)
     {
-        return new class extends Model {
+        return new class extends Model
+        {
             public $exists = true;
 
             protected $attributes = [

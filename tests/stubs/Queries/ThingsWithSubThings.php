@@ -13,7 +13,7 @@ class ThingsWithSubThings
             new TypedThing('thing', collect([
                 new TypedSubThing('sub-thing-foo', new TypedThing('foo', collect())),
                 new TypedSubThing('sub-thing-bar', new TypedThing('bar', collect())),
-            ]))
+            ])),
         ]);
     }
 }
