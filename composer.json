@@ -40,9 +40,9 @@
     "license": "MIT",
     "name": "glesys/butler-graphql",
     "require": {
-        "php": "^8.1",
+        "php": "^8.2",
         "amphp/amp": "^2.5",
-        "illuminate/support": "^10.0",
+        "illuminate/support": "^11.0",
         "webonyx/graphql-php": "^14.3.0"
     },
     "require-dev": {

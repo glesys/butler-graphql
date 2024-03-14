@@ -76,10 +76,6 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
 
     public function test_enum_resolvers()
     {
-        if (PHP_VERSION_ID < 80100) {
-            $this->markTestSkipped("Enums not supported in current php version.");
-        }
-
         $this->app->config->set('butler.graphql.include_debug_message', true);
         $this->app->config->set('butler.graphql.include_trace', true);
 
