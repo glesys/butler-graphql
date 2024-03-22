@@ -36,7 +36,7 @@ class DataLoader
 
     private function makeLoader(Closure $batchLoadFunction, $defaultResolveValue)
     {
-        return new class ($batchLoadFunction, $defaultResolveValue)
+        return new class($batchLoadFunction, $defaultResolveValue)
         {
             private $batchLoadFunction;
             private $defaultResolveValue;
@@ -94,7 +94,7 @@ class DataLoader
                         unset($this->deferredPromises[$key]);
                     }
 
-                    ++$currentIndex;
+                    $currentIndex++;
                 }
 
                 foreach ($this->deferredPromises as $key => [$deferredPromise]) {
@@ -112,6 +112,7 @@ class DataLoader
                 } elseif (is_array($key)) {
                     return md5(json_encode($key));
                 }
+
                 return (string) $key;
             }
         };

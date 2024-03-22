@@ -17,7 +17,7 @@ class ResolveInterfaceFromQuery
                 'height' => 100,
                 'width' => 200,
             ],
-            (object)[
+            (object) [
                 'name' => 'Attachment 2',
                 'size' => 1024,
                 '__typename' => 'Video',

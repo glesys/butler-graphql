@@ -12,7 +12,7 @@ class ResolveInterfaceFromType
                 'name' => 'Attachment 1',
                 'height' => 100,
                 'width' => 200,
-            ]
+            ],
         ];
     }
 }

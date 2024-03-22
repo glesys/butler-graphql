@@ -1,4 +1,4 @@
-<?php // phpcs:disable
+<?php
 
 enum ThingEnum: string
 {

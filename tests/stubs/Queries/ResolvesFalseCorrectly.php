@@ -9,8 +9,8 @@ class ResolvesFalseCorrectly
         return [
             ['id' => 1, 'requiredFlag' => true],
             ['id' => 2, 'requiredFlag' => false],
-            (object)['id' => 3, 'requiredFlag' => true],
-            (object)['id' => 4, 'requiredFlag' => false],
+            (object) ['id' => 3, 'requiredFlag' => true],
+            (object) ['id' => 4, 'requiredFlag' => false],
         ];
     }
 }

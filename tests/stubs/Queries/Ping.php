@@ -6,6 +6,6 @@ class Ping
 {
     public function __invoke($root, $args, $context)
     {
-        return "pong";
+        return 'pong';
     }
 }

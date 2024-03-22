@@ -1,10 +1,8 @@
-<?php // phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
+<?php
 
 namespace Butler\Graphql\Tests\Queries;
 
-if (PHP_VERSION_ID >= 80100) {
-    require_once __DIR__ . '/../enums.php';
-}
+require_once __DIR__ . '/../enums.php';
 
 class TestEnumResolvers
 {

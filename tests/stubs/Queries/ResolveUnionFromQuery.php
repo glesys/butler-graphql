@@ -13,7 +13,7 @@ class ResolveUnionFromQuery
             (object) ['name' => 'Soundtrack 2', 'size' => 2048, 'encoding' => 'mp3', '__typename' => 'Audio'],
             ['name' => 'Soundtrack 3', 'size' => 4096, 'encoding' => 'mp3'],
             ['name' => 'Photo 1', 'size' => 256, 'height' => 100, 'width' => 200, '__typename' => 'Photo'],
-            (object)['name' => 'Video 2', 'size' => 512, 'length' => 3600, '__typename' => 'Video'],
+            (object) ['name' => 'Video 2', 'size' => 512, 'length' => 3600, '__typename' => 'Video'],
         ];
     }
 

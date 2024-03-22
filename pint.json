@@ -1,0 +1,15 @@
+{
+    "preset": "laravel",
+    "rules": {
+        "concat_space": {
+            "spacing": "one"
+        },
+        "no_multiline_whitespace_around_double_arrow": false,
+        "class_attributes_separation" : {
+            "elements" : {
+                "method" : "one",
+                "trait_import" : "none"
+            }
+        }
+    }
+}

@@ -10,7 +10,7 @@ return [
         'namespace' => env('BUTLER_GRAPHQL_NAMESPACE', 'App\\Http\\Graphql\\'),
 
         'schema' => env('BUTLER_GRAPHQL_SCHEMA', base_path('app/Http/Graphql/schema.graphql')),
-        
+
         'schema_extensions_path' => env('BUTLER_GRAPHQL_SCHEMA_EXTENSIONS_PATH', base_path('app/Http/Graphql/')),
         'schema_extensions_glob' => env('BUTLER_GRAPHQL_SCHEMA_EXTENSIONS_GLOB', 'schema-*.graphql'),
 

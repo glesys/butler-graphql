@@ -10,8 +10,8 @@ class TestResolvers
     {
         return [
             ['name' => 'Thing 1'],
-            (object)['name' => 'Thing 2'],
-            ['name' => 'Thing 3', 'missing_type' => new TypedSubThing('Sub Thing')]
+            (object) ['name' => 'Thing 2'],
+            ['name' => 'Thing 3', 'missing_type' => new TypedSubThing('Sub Thing')],
         ];
     }
 }
