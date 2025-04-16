@@ -3,11 +3,12 @@ on: push
 jobs:
   tests:
     runs-on: ubuntu-latest
-    name: Testing with Laravel ${{ matrix.laravel }} and PHP ${{ matrix.php }}
+    name: Testing with laravel/framework ${{ matrix.laravel }}, webonyx/graphql-php ${{ matrix.webonyx }} and PHP ${{ matrix.php }}
     strategy:
         matrix:
-            php: [8.2, 8.3]
-            laravel: [^11.0]
+            php: [8.2, 8.3, 8.4]
+            laravel: [^11.0, ^12.0]
+            webonyx: [^14.0, ^15.0]
     steps:
       - uses: actions/checkout@v2
 
@@ -21,6 +22,7 @@ jobs:
       - name: Install Composer dependencies
         run: |
             composer require "laravel/framework:${{ matrix.laravel }}" --no-interaction --no-update
+            composer require "webonyx/graphql-php:${{ matrix.webonyx }}" --no-interaction --no-update
             composer update --prefer-dist --no-interaction --no-ansi --no-progress
 
       - name: Execute tests
