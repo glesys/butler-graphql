@@ -1,3 +1,13 @@
+## Upgrade from v11 to v12
+
+### BREAKING: Require `webonyx/graphql-php:^15.0`.
+
+If you use `include_debug_message` or `include_trace` the fields `debugMessage` and `trace` will no longer be present in the root payload of the errors, but instead under the `extensions: { ... }` object.
+
+- `errors.*.debugMessage` is now `errors.*.extensions.debugMessage`.
+- `errors.*.trace` is now `errors.*.extensions.trace`.
+
+
 ## Upgrade from v4 to v5
 
 ### BREAKING: Promises are based on `amphp/amp` instead of `react/promise`

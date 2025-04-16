@@ -41,15 +41,15 @@
     "name": "glesys/butler-graphql",
     "require": {
         "php": "^8.2",
-        "amphp/amp": "^2.5",
-        "illuminate/support": "^11.0",
-        "webonyx/graphql-php": "^14.3.0"
+        "amphp/amp": "^2.6",
+        "illuminate/support": "^11.0 || ^12.0",
+        "webonyx/graphql-php": "^15.0"
     },
     "require-dev": {
         "graham-campbell/testbench": "^6.0",
         "laravel/pint": "^1.14",
         "mockery/mockery": "^1.4.4",
-        "phpunit/phpunit": "^10.0"
+        "phpunit/phpunit": "^10.0 || ^11.0"
     },
     "suggest": {
         "barryvdh/laravel-debugbar": "View debug information in responses."

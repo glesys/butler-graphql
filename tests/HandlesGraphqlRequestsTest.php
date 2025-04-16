@@ -226,8 +226,8 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
             'query' => 'query { throwException }',
         ]));
 
-        $this->assertFalse(Arr::has($data, 'errors.0.debugMessage'), 'debugMessage should not be included');
-        $this->assertFalse(Arr::has($data, 'errors.0.trace'), 'trace should not be included');
+        $this->assertFalse(Arr::has($data, 'errors.0.extensions.debugMessage'), 'debugMessage should not be included');
+        $this->assertFalse(Arr::has($data, 'errors.0.extensions.trace'), 'trace should not be included');
         $this->assertSame('Internal server error', Arr::get($data, 'errors.0.message'));
         $this->assertSame('internal', Arr::get($data, 'errors.0.extensions.category'));
     }
@@ -267,8 +267,8 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
             'query' => 'query { throwException }',
         ]));
 
-        $this->assertFalse(Arr::has($data, 'errors.0.trace'), 'trace should not be included');
-        $this->assertSame('An error occured', Arr::get($data, 'errors.0.debugMessage'));
+        $this->assertFalse(Arr::has($data, 'errors.0.extensions.trace'), 'trace should not be included');
+        $this->assertSame('An error occured', Arr::get($data, 'errors.0.extensions.debugMessage'));
         $this->assertSame('Internal server error', Arr::get($data, 'errors.0.message'));
         $this->assertSame('internal', Arr::get($data, 'errors.0.extensions.category'));
     }
@@ -282,8 +282,8 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
             'query' => 'query { throwException }',
         ]));
 
-        $this->assertFalse(Arr::has($data, 'errors.0.debugMessage'), 'debugMessage should not be included');
-        $this->assertGreaterThan(10, Arr::get($data, 'errors.0.trace'));
+        $this->assertFalse(Arr::has($data, 'errors.0.extensions.debugMessage'), 'debugMessage should not be included');
+        $this->assertGreaterThan(10, Arr::get($data, 'errors.0.extensions.trace'));
         $this->assertSame('Internal server error', Arr::get($data, 'errors.0.message'));
         $this->assertSame('internal', Arr::get($data, 'errors.0.extensions.category'));
     }
@@ -417,7 +417,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
             'query' => 'query { nonExistingClassDependency }',
         ]));
 
-        $this->assertContains(data_get($data, 'errors.0.debugMessage'), [
+        $this->assertContains(data_get($data, 'errors.0.extensions.debugMessage'), [
             "Class Butler\Graphql\Tests\Queries\NonExistingClass does not exist", // Laravel < 6.0
             "Target class [Butler\Graphql\Tests\Queries\NonExistingClass] does not exist.", // Laravel >= 6.0
         ]);
