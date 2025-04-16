@@ -5,6 +5,7 @@ namespace Butler\Graphql;
 use Amp\Deferred;
 use Amp\Loop;
 use Closure;
+use Illuminate\Contracts\Support\Arrayable;
 use ReflectionFunction;
 
 class DataLoader
@@ -82,9 +83,10 @@ class DataLoader
 
                 $result = ($this->batchLoadFunction)($indexedOriginalKeys);
 
-                $currentIndex = 0;
+                $resultIsList = array_is_list($result instanceof Arrayable ? $result->toArray() : $result);
+
                 foreach ($result as $key => $value) {
-                    if ($key === $currentIndex) {
+                    if ($resultIsList) {
                         $key = $indexedOriginalKeys[$key] ?? $key;
                     }
                     $key = self::serializeKey($key);
@@ -93,8 +95,6 @@ class DataLoader
                         $deferred->resolve($value);
                         unset($this->deferredPromises[$key]);
                     }
-
-                    $currentIndex++;
                 }
 
                 foreach ($this->deferredPromises as $key => [$deferredPromise]) {
