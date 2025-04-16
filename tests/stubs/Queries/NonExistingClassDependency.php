@@ -4,9 +4,7 @@ namespace Butler\Graphql\Tests\Queries;
 
 class NonExistingClassDependency
 {
-    public function __construct(NonExistingClass $nonExistinObject)
-    {
-    }
+    public function __construct(NonExistingClass $nonExistinObject) {}
 
     public function __invoke($root, $args, $context)
     {
