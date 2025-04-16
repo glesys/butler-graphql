@@ -96,9 +96,7 @@ trait HandlesGraphqlRequests
         DocumentNode $query,
         ?string $operationName = null,
         $variables = null
-    ): void {
-
-    }
+    ): void {}
 
     public function errorFormatter(GraphqlError $graphqlError)
     {
