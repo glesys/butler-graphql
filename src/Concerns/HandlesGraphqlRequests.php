@@ -100,7 +100,12 @@ trait HandlesGraphqlRequests
 
     public function errorFormatter(GraphqlError $graphqlError)
     {
-        $formattedError = FormattedError::createFromException($graphqlError);
+        $formattedError = array_merge(FormattedError::createFromException($graphqlError), [
+            'extensions' => [
+                'category' => 'internal',
+            ],
+        ]);
+
         $throwable = $graphqlError->getPrevious();
 
         $this->reportException(
