@@ -39,6 +39,18 @@ class Thing
         })->load($source['name']);
     }
 
+    public function dataLoadedByIntegerKey($source, $args, $context, ResolveInfo $info)
+    {
+        return $context['loader'](function () {
+            // NOTE: The order of these keys is important for testing the ability
+            // to differentiate between index-based and integer-based keys.
+            return [
+                2 => 'By integer key: Thing 2',
+                1 => 'By integer key: Thing 1',
+            ];
+        })->load((int) $source['id']);
+    }
+
     public function dataLoadedWithDefault($source, $args, $context, ResolveInfo $info)
     {
         return $context['loader'](function () {

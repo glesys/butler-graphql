@@ -145,6 +145,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
                 dataLoader {
                     dataLoaded
                     dataLoadedByKey
+                    dataLoadedByIntegerKey
                     dataLoadedUsingArray
                     dataLoadedUsingObject
                     dataLoadedWithDefault
@@ -161,6 +162,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
                         [
                             'dataLoaded' => 'THING 1',
                             'dataLoadedByKey' => 'By key: Thing 1',
+                            'dataLoadedByIntegerKey' => 'By integer key: Thing 1',
                             'dataLoadedUsingArray' => 'As array: Thing 1',
                             'dataLoadedUsingObject' => 'As object: Thing 1',
                             'dataLoadedWithDefault' => 'Thing 1',
@@ -170,6 +172,7 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
                         [
                             'dataLoaded' => 'THING 2',
                             'dataLoadedByKey' => 'By key: Thing 2',
+                            'dataLoadedByIntegerKey' => 'By integer key: Thing 2',
                             'dataLoadedUsingArray' => 'As array: Thing 2',
                             'dataLoadedUsingObject' => 'As object: Thing 2',
                             'dataLoadedWithDefault' => 'default value',

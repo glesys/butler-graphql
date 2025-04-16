@@ -45,6 +45,7 @@ type Thing {
     missingType: SubThing
     dataLoaded: String!
     dataLoadedByKey: String!
+    dataLoadedByIntegerKey: String!
     dataLoadedUsingArray: String!
     dataLoadedUsingObject: String!
     dataLoadedWithDefault: String!
