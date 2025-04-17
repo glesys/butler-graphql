@@ -43,7 +43,7 @@
         "php": "^8.2",
         "amphp/amp": "^2.5",
         "illuminate/support": "^11.0",
-        "webonyx/graphql-php": "^14.3.0"
+        "webonyx/graphql-php": "^14.3.0 || ^15.0.0"
     },
     "require-dev": {
         "graham-campbell/testbench": "^6.0",
