@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## [11.0.1] - 2025-04-22
+
+### Fixed
+- Update data loader behaviour for integer ID-based "associative" keys [#96](https://github.com/glesys/butler-graphql/pull/96)
+
+
 ## [11.0.0] - 2024-05-28
 
 ### Added
