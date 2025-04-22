@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [12.0.0] - 2025-04-22
+
 ### Changed
 - **BREAKING**: Require `webonyx/graphql-php:^15.0`. This is a breaking change if you use `include_debug_message` or `include_trace`. The fields `debugMessage` and `trace` will no longer be present in the root payload of the errors, but instead under the `extensions: { ... }` object.
 
