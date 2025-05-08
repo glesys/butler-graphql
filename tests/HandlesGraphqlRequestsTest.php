@@ -346,6 +346,18 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
         $this->assertSame(['foo' => ['The foo field is required.']], Arr::get($data, 'errors.0.extensions.validation'));
     }
 
+    public function test_custom_error_providing_extensions()
+    {
+        $controller = $this->app->make(GraphqlController::class);
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'query { throwCustomErrorProvidingExtensions }',
+        ]));
+
+        $this->assertSame('This is a custom exception.', Arr::get($data, 'errors.0.message'));
+        $this->assertSame('custom-category', Arr::get($data, 'errors.0.extensions.category'));
+        $this->assertSame('bar', Arr::get($data, 'errors.0.extensions.foo'));
+    }
+
     public function test_invalid_schema()
     {
         $handler = Mockery::mock(ExceptionHandler::class);

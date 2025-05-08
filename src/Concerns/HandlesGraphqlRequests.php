@@ -100,11 +100,7 @@ trait HandlesGraphqlRequests
 
     public function errorFormatter(GraphqlError $graphqlError)
     {
-        $formattedError = array_merge(FormattedError::createFromException($graphqlError), [
-            'extensions' => [
-                'category' => 'internal',
-            ],
-        ]);
+        $formattedError = FormattedError::createFromException($graphqlError);
 
         $throwable = $graphqlError->getPrevious();
 
@@ -113,13 +109,11 @@ trait HandlesGraphqlRequests
         );
 
         if ($throwable instanceof AuthorizationException) {
-            return array_merge($formattedError, [
-                'message' => $throwable->getMessage(),
-                'extensions' => [
-                    'category' => 'client',
-                    'code' => $throwable->status() ?: 403,
-                ],
-            ]);
+            data_set($formattedError, 'message', $throwable->getMessage());
+            data_fill($formattedError, 'extensions.category', 'client');
+            data_fill($formattedError, 'extensions.code', $throwable->status() ?: 403);
+
+            return $formattedError;
         }
 
         if (
@@ -127,34 +121,30 @@ trait HandlesGraphqlRequests
             $throwable->getStatusCode() >= 400 &&
             $throwable->getStatusCode() < 500
         ) {
-            return array_merge($formattedError, [
-                'message' => $throwable->getMessage(),
-                'extensions' => [
-                    'category' => 'client',
-                    'code' => $throwable->getStatusCode(),
-                ],
-            ]);
+            data_set($formattedError, 'message', $throwable->getMessage());
+            data_fill($formattedError, 'extensions.category', 'client');
+            data_fill($formattedError, 'extensions.code', $throwable->getStatusCode());
+
+            return $formattedError;
         }
 
         if ($throwable instanceof ModelNotFoundException) {
-            return array_merge($formattedError, [
-                'message' => class_basename($throwable->getModel()) . ' not found.',
-                'extensions' => [
-                    'category' => 'client',
-                    'code' => 404,
-                ],
-            ]);
+            data_set($formattedError, 'message', class_basename($throwable->getModel()) . ' not found.');
+            data_fill($formattedError, 'extensions.category', 'client');
+            data_fill($formattedError, 'extensions.code', 404);
+
+            return $formattedError;
         }
 
         if ($throwable instanceof ValidationException) {
-            return array_merge($formattedError, [
-                'message' => $throwable->getMessage(),
-                'extensions' => [
-                    'category' => 'validation',
-                    'validation' => $throwable->errors(),
-                ],
-            ]);
+            data_set($formattedError, 'message', $throwable->getMessage());
+            data_fill($formattedError, 'extensions.category', 'validation');
+            data_fill($formattedError, 'extensions.validation', $throwable->errors());
+
+            return $formattedError;
         }
+
+        data_fill($formattedError, 'extensions.category', 'internal');
 
         return $formattedError;
     }
