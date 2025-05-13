@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [12.0.1] - 2025-05-13
+
 ### Fixed
 - Fix incorrect merging behavior when using `ProvidesExtensions` in exceptions.
 
