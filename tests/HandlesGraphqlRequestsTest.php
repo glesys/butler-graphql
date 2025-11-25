@@ -3,6 +3,7 @@
 namespace Butler\Graphql\Tests;
 
 use Butler\Graphql\Tests\Types\Thing;
+use Closure;
 use Exception;
 use GraphQL\Error\Error;
 use GraphQL\Error\SyntaxError;
@@ -12,6 +13,7 @@ use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Cache;
 use Mockery;
 
 class HandlesGraphqlRequestsTest extends AbstractTestCase
@@ -133,6 +135,56 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
         ]));
 
         $this->assertSame('Hello World!', Arr::get($data, 'data.testMutation.message'));
+    }
+
+    public function test_schema_caching_disabled()
+    {
+        $this->app->config->set('butler.graphql.schema_cache_store', null);
+
+        Cache::shouldReceive('store')->never();
+
+        $controller = $this->app->make(GraphqlController::class);
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'query {
+                ping
+            }',
+        ]));
+
+        $this->assertSame(['data' => ['ping' => 'pong']], $data);
+    }
+
+    public function test_schema_caching_enabled()
+    {
+        $this->app->config->set('butler.graphql.schema_cache_store', 'cache_store');
+        $this->app->config->set('butler.graphql.schema_cache_key', 'cache_key');
+        $this->app->config->set('butler.graphql.schema_cache_ttl', 123);
+
+        $controller = $this->app->make(GraphqlController::class);
+
+        $store = Mockery::spy(Cache::driver('array'));
+
+        Cache::shouldReceive('store')
+            ->with('cache_store')
+            ->once()
+            ->andReturn($store);
+
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'query {
+                ping
+            }',
+        ]));
+
+        $this->assertSame(['data' => ['ping' => 'pong']], $data);
+
+        $store->shouldHaveReceived('remember')
+            ->with('cache_key', 123, Mockery::type(Closure::class))
+            ->once();
+
+        $cached = $store->get('cache_key');
+        
+        $this->assertIsArray($cached, 'cached AST array is present');
+        $this->assertArrayHasKey('kind', $cached, 'cached AST array has a "kind" key');
+        $this->assertEquals('Document', $cached['kind'], 'cached AST array "kind" key has correct value');
     }
 
     public function test_data_loader()

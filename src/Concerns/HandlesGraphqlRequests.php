@@ -19,13 +19,15 @@ use GraphQL\Type\Definition\LeafType;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\WrappingType;
 use GraphQL\Type\Schema;
+use GraphQL\Utils\AST;
 use GraphQL\Utils\BuildSchema;
-use GraphQL\Utils\SchemaExtender;
+use GraphQL\Validator\DocumentValidator;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Database\Eloquent\MissingAttributeException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -54,11 +56,21 @@ trait HandlesGraphqlRequests
         $operationName = $request->input('operationName');
 
         try {
-            $schema = BuildSchema::build($this->schema(), [$this, 'decorateTypeConfig']);
+            $document = null;
 
-            foreach ($this->schemaExtensions() as $extension) {
-                $schema = SchemaExtender::extend($schema, Parser::parse($extension), [], [$this, 'decorateTypeConfig']);
+            if ($cacheStore = $this->schemaCacheStore()) {
+                $document = AST::fromArray(
+                    Cache::store($cacheStore)->remember(
+                        $this->schemaCacheKey(),
+                        $this->schemaCacheTtl(),
+                        fn () => AST::toArray($this->parseDocument())
+                    )
+                );
             }
+
+            $document ??= $this->parseDocument();
+
+            $schema = BuildSchema::build($document, [$this, 'decorateTypeConfig'], ['assumeValidSDL' => true]);
 
             $source = Parser::parse($query);
 
@@ -89,6 +101,34 @@ trait HandlesGraphqlRequests
         $result->setErrorFormatter([$this, 'errorFormatter']);
 
         return $this->decorateResponse($result->toArray($this->debugFlags()));
+    }
+
+    public function parseDocument(): DocumentNode
+    {
+        $schema = $this->schema();
+        foreach ($this->schemaExtensions() as $extension) {
+            $schema .= "\n" . $extension;
+        }
+
+        $document = Parser::parse($schema);
+        DocumentValidator::assertValidSDL($document);
+
+        return $document;
+    }
+
+    public function schemaCacheStore(): ?string
+    {
+        return config('butler.graphql.schema_cache_store');
+    }
+
+    public function schemaCacheKey(): string
+    {
+        return config('butler.graphql.schema_cache_key');
+    }
+
+    public function schemaCacheTtl(): \DateTimeInterface|\DateInterval|\Closure|int|null
+    {
+        return config('butler.graphql.schema_cache_ttl');
     }
 
     public function beforeExecutionHook(

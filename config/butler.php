@@ -11,6 +11,10 @@ return [
 
         'schema' => env('BUTLER_GRAPHQL_SCHEMA', base_path('app/Http/Graphql/schema.graphql')),
 
+        'schema_cache_store' => env('BUTLER_GRAPHQL_SCHEMA_CACHE_STORE', null),
+        'schema_cache_key' => env('BUTLER_GRAPHQL_SCHEMA_CACHE_KEY', 'butler-graphql:schema-cache'),
+        'schema_cache_ttl' => env('BUTLER_GRAPHQL_SCHEMA_CACHE_TTL', null),
+
         'schema_extensions_path' => env('BUTLER_GRAPHQL_SCHEMA_EXTENSIONS_PATH', base_path('app/Http/Graphql/')),
         'schema_extensions_glob' => env('BUTLER_GRAPHQL_SCHEMA_EXTENSIONS_GLOB', 'schema-*.graphql'),
 

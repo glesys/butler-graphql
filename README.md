@@ -212,6 +212,15 @@ class Attachments
 If none of the above are available Butler GraphQL will resort to the base class name of the data if it's an object.
 
 
+### Caching
+
+To improve the performance as your schema grows and evolves, you can opt-in to caching the parsed AST by providing the name of the laravel Cache store you want to use.
+
+```
+BUTLER_GRAPHQL_SCHEMA_CACHE_STORE=redis
+```
+
+
 ### N+1 and the Data Loader
 
 Butler GraphQL includes a simple data loader to prevent n+1 issues when loading nested data. It's available in `$context['loader']` and really easy to use:
@@ -327,6 +336,12 @@ php artisan vendor:publish
 
 - `BUTLER_GRAPHQL_SCHEMA_EXTENSIONS_PATH` – Defaults to `app_path('Http/Graphql/')`.
 - `BUTLER_GRAPHQL_SCHEMA_EXTENSIONS_GLOB` – Defaults to `'schema-*.graphql'`.
+
+### Control caching
+
+- `BUTLER_GRAPHQL_SCHEMA_CACHE_STORE` – Defaults to `null`. Provide the name of the configured cache store to enable caching.
+- `BUTLER_GRAPHQL_SCHEMA_CACHE_KEY` – Defaults to `butler-graphql:schema-cache`.
+- `BUTLER_GRAPHQL_SCHEMA_CACHE_TTL` – Defaults to `null` (indefinitely).
 
 ### Debugging
 
