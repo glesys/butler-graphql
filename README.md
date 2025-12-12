@@ -212,6 +212,31 @@ class Attachments
 If none of the above are available Butler GraphQL will resort to the base class name of the data if it's an object.
 
 
+### Caching
+
+To improve the performance as your schema grows and evolves, you can opt-in to caching the compiled schema by overriding `compiledSchemaPath()` in your controller and provide a path to where you want it to be stored:
+
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use Butler\Graphql\Concerns\HandlesGraphqlRequests;
+
+class GraphqlController extends Controller
+{
+    use HandlesGraphqlRequests;
+
+    public function compiledSchemaPath(): ?string
+    {
+        return app()->isProduction()
+            ? app()->bootstrapPath('cache/graphql-schema-compiled.php')
+            : null;
+    }
+}
+```
+
+
 ### N+1 and the Data Loader
 
 Butler GraphQL includes a simple data loader to prevent n+1 issues when loading nested data. It's available in `$context['loader']` and really easy to use:

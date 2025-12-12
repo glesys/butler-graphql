@@ -16,5 +16,8 @@
             "named_class": true
         },
         "php_unit_method_casing": false
-    }
+    },
+    "notPath": [
+        "tests/stubs/schema-compiled.php"
+    ]
 }

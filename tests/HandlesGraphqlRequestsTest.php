@@ -769,6 +769,24 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
         $this->assertEquals(['foo' => 'bar'], $controller->variables);
     }
 
+    public function test_compiled_schema()
+    {
+        $controller = $this->app->make(GraphqlControllerWithCompiledSchema::class);
+
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'query { ping }',
+        ]));
+
+        $this->assertSame(
+            [
+                'data' => [
+                    'ping' => 'pong',
+                ],
+            ],
+            $data
+        );
+    }
+
     public function test_eloquent_strictness()
     {
         if (! method_exists(Model::class, 'preventAccessingMissingAttributes')) {
