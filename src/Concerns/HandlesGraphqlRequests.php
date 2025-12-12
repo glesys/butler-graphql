@@ -19,8 +19,9 @@ use GraphQL\Type\Definition\LeafType;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\WrappingType;
 use GraphQL\Type\Schema;
+use GraphQL\Utils\AST;
 use GraphQL\Utils\BuildSchema;
-use GraphQL\Utils\SchemaExtender;
+use GraphQL\Validator\DocumentValidator;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Database\Eloquent\MissingAttributeException;
@@ -54,11 +55,9 @@ trait HandlesGraphqlRequests
         $operationName = $request->input('operationName');
 
         try {
-            $schema = BuildSchema::build($this->schema(), [$this, 'decorateTypeConfig']);
+            $document = $this->loadSchemaDocument();
 
-            foreach ($this->schemaExtensions() as $extension) {
-                $schema = SchemaExtender::extend($schema, Parser::parse($extension), [], [$this, 'decorateTypeConfig']);
-            }
+            $schema = BuildSchema::build($document, [$this, 'decorateTypeConfig'], ['assumeValidSDL' => true]);
 
             $source = Parser::parse($query);
 
@@ -164,6 +163,11 @@ trait HandlesGraphqlRequests
         return config('butler.graphql.schema');
     }
 
+    public function compiledSchemaPath(): ?string
+    {
+        return null;
+    }
+
     public function schemaExtensions()
     {
         $path = $this->schemaExtensionsPath();
@@ -186,6 +190,36 @@ trait HandlesGraphqlRequests
     public function schemaExtensionsGlob()
     {
         return config('butler.graphql.schema_extensions_glob');
+    }
+
+    protected function loadSchemaDocument(): DocumentNode
+    {
+        $compiledSchemaPath = $this->compiledSchemaPath();
+
+        if ($compiledSchemaPath && file_exists($compiledSchemaPath)) {
+            return AST::fromArray(require $compiledSchemaPath);
+        }
+
+        $document = $this->parseDocument();
+
+        if ($compiledSchemaPath) {
+            file_put_contents($compiledSchemaPath, "<?php\nreturn " . var_export(AST::toArray($document), true) . ";\n");
+        }
+
+        return $document;
+    }
+
+    protected function parseDocument(): DocumentNode
+    {
+        $schema = $this->schema();
+
+        foreach ($this->schemaExtensions() as $extension) {
+            $schema .= "\n" . $extension;
+        }
+
+        DocumentValidator::assertValidSDL($document = Parser::parse($schema));
+
+        return $document;
     }
 
     public function decorateTypeConfig(array $config, TypeDefinitionNode $typeDefinitionNode)
