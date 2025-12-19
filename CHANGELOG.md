@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [12.1.0] - 2025-12-19
+
 ### Added
 - Support for caching the compiled schema to improve performance.
 
