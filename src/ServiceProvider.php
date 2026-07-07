@@ -2,6 +2,8 @@
 
 namespace Butler\Graphql;
 
+use GraphQL\Executor\Promise\Adapter\AmpPromiseAdapter;
+use GraphQL\Executor\Promise\PromiseAdapter;
 use Illuminate\Foundation\Application as LaravelApplication;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use Laravel\Lumen\Application as LumenApplication;
@@ -16,8 +18,8 @@ class ServiceProvider extends BaseServiceProvider
     public function register()
     {
         $this->app->bind(
-            \GraphQL\Executor\Promise\PromiseAdapter::class,
-            \GraphQL\Executor\Promise\Adapter\AmpPromiseAdapter::class
+            PromiseAdapter::class,
+            AmpPromiseAdapter::class
         );
     }
 
