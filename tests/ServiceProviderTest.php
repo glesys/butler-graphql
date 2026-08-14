@@ -2,7 +2,9 @@
 
 namespace Butler\Graphql\Tests;
 
+use Butler\Graphql\DataLoader;
 use GrahamCampbell\TestBenchCore\ServiceProviderTrait;
+use GraphQL\Executor\Promise\PromiseAdapter;
 
 class ServiceProviderTest extends AbstractTestCase
 {
@@ -10,12 +12,12 @@ class ServiceProviderTest extends AbstractTestCase
 
     public function test_data_loader_is_injectable()
     {
-        $this->assertIsInjectable(\Butler\Graphql\DataLoader::class);
+        $this->assertIsInjectable(DataLoader::class);
     }
 
     public function test_promise_adapter_is_injectable()
     {
-        $this->assertIsInjectable(\GraphQL\Executor\Promise\PromiseAdapter::class);
+        $this->assertIsInjectable(PromiseAdapter::class);
     }
 
     public function test_include_debug_message_config()

@@ -2,6 +2,7 @@
 
 namespace Butler\Graphql\Tests;
 
+use Amp\Failure;
 use Amp\Promise as PromiseInterface;
 use Butler\Graphql\Concerns\AssertsPromises;
 use Butler\Graphql\DataLoader;
@@ -94,7 +95,7 @@ class AssertsPromisesTest extends TestCase
 
     public function test_assertPromiseFulfills_handles_rejected_promise()
     {
-        $promise = new \Amp\Failure(new Exception('foo bar')); // reject($this->testObject->square(1));
+        $promise = new Failure(new Exception('foo bar')); // reject($this->testObject->square(1));
 
         try {
             $this->testObject->assertPromiseFulfills($promise);

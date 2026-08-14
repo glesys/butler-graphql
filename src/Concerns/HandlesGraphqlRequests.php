@@ -63,7 +63,7 @@ trait HandlesGraphqlRequests
 
             $this->beforeExecutionHook($schema, $source, $operationName, $variables);
 
-            /** @var \GraphQL\Executor\ExecutionResult */
+            /** @var ExecutionResult */
             $result = null;
 
             GraphQL::promiseToExecute(

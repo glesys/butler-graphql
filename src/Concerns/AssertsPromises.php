@@ -3,8 +3,10 @@
 namespace Butler\Graphql\Concerns;
 
 use Amp\Loop;
+use Amp\Promise;
 use Closure;
 use Exception;
+use React\Promise\PromiseInterface;
 
 use function Amp\call;
 use function Amp\Promise\all;
@@ -12,7 +14,7 @@ use function Amp\Promise\all;
 trait AssertsPromises
 {
     /**
-     * @param  \Amp\Promise|\React\Promise\PromiseInterface|mixed  $promise
+     * @param  Promise|PromiseInterface|mixed  $promise
      * @param  mixed|Closure  $expectedValue
      */
     public function assertPromiseFulfills($promise, $expectedValue = null): void
