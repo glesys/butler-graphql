@@ -2,16 +2,19 @@
 
 namespace Butler\Graphql\Concerns;
 
+use Butler\Graphql\Contracts\Scalar;
 use Butler\Graphql\DataLoader;
 use Exception;
 use GraphQL\Error\DebugFlag;
 use GraphQL\Error\Error as GraphqlError;
 use GraphQL\Error\FormattedError;
+use GraphQL\Error\InvariantViolation;
 use GraphQL\Executor\ExecutionResult;
 use GraphQL\Executor\Promise\PromiseAdapter;
 use GraphQL\GraphQL;
 use GraphQL\Language\AST\DocumentNode;
 use GraphQL\Language\AST\InterfaceTypeDefinitionNode;
+use GraphQL\Language\AST\ScalarTypeDefinitionNode;
 use GraphQL\Language\AST\TypeDefinitionNode;
 use GraphQL\Language\AST\UnionTypeDefinitionNode;
 use GraphQL\Language\Parser;
@@ -228,7 +231,45 @@ trait HandlesGraphqlRequests
             $config['resolveType'] = [$this, 'resolveType'];
         }
 
+        if ($typeDefinitionNode instanceof ScalarTypeDefinitionNode) {
+            $config = $this->decorateScalarConfig($config, $typeDefinitionNode);
+        }
+
         return $config;
+    }
+
+    protected function decorateScalarConfig(array $config, ScalarTypeDefinitionNode $typeDefinitionNode): array
+    {
+        if (! $scalar = $this->resolveScalar($typeDefinitionNode->name->value)) {
+            return $config;
+        }
+
+        if (! $scalar instanceof Scalar) {
+            throw new InvariantViolation(sprintf(
+                'Scalar class %s must implement %s.',
+                $scalar::class,
+                Scalar::class,
+            ));
+        }
+
+        $config['serialize'] = [$scalar, 'serialize'];
+        $config['parseValue'] = [$scalar, 'parseValue'];
+        $config['parseLiteral'] = [$scalar, 'parseLiteral'];
+
+        if (method_exists($scalar, 'description')) {
+            $config['description'] ??= $scalar->description();
+        }
+
+        if (method_exists($scalar, 'specifiedByURL')) {
+            $config['specifiedByURL'] ??= $scalar->specifiedByURL();
+        }
+
+        return $config;
+    }
+
+    protected function resolveScalar(string $name): ?object
+    {
+        return $this->make($this->scalarsNamespace() . $name);
     }
 
     protected function shouldDecorateWithResolveType(TypeDefinitionNode $typeDefinitionNode)
@@ -422,6 +463,11 @@ trait HandlesGraphqlRequests
     public function typesNamespace(): string
     {
         return $this->namespace() . 'Types\\';
+    }
+
+    public function scalarsNamespace(): string
+    {
+        return $this->namespace() . 'Scalars\\';
     }
 
     public function returnTypeIsLeaf(ResolveInfo $info): bool

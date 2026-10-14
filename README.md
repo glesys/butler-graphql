@@ -133,6 +133,89 @@ class Signup
 
 *NOTE:* If a field name in your GraphQL schema definition match the key (for arrayables) or property (for objects) of your source object, you don't need to define a resolver method for that field.
 
+### Scalars
+
+Custom scalars declared in your schema are resolved from the `App\Http\Graphql\Scalars` namespace. Declare the scalar in the schema, and put its behaviour in a class with the same name.
+
+```graphql
+scalar Email
+```
+
+```php
+<?php
+
+namespace App\Http\Graphql\Scalars;
+
+use Butler\Graphql\Contracts\Scalar;
+use GraphQL\Error\Error;
+use GraphQL\Language\AST\StringValueNode;
+use GraphQL\Language\AST\ValueNode;
+
+class Email implements Scalar
+{
+    // Optional: exposed as the scalar's description
+    public function description(): string
+    {
+        return 'An email address.';
+    }
+
+    // Optional: exposed as @specifiedBy
+    public function specifiedByURL(): string
+    {
+        return 'https://html.spec.whatwg.org/#valid-e-mail-address';
+    }
+
+    // Output: the value returned by a resolver
+    public function serialize(mixed $value): mixed
+    {
+        return $value;
+    }
+
+    // Input: the value given as a JSON variable
+    public function parseValue(mixed $value): mixed
+    {
+        if (! is_string($value) || ! filter_var($value, FILTER_VALIDATE_EMAIL)) {
+            throw new Error('Not a valid email address.');
+        }
+
+        return $value;
+    }
+
+    // Input: the value written inline in the query
+    public function parseLiteral(ValueNode $valueNode, ?array $variables = null): mixed
+    {
+        if (! $valueNode instanceof StringValueNode) {
+            throw new Error('Not a valid email address.', $valueNode);
+        }
+
+        return $this->parseValue($valueNode->value);
+    }
+}
+```
+
+The optional `description()` and `specifiedByURL()` methods expose the scalar's description and specification URL. A description or `@specifiedBy` directive in the schema takes precedence over the class methods.
+
+To resolve scalars from somewhere else as well, for example a package, override `resolveScalar()` in your controller:
+
+```php
+class GraphqlController
+{
+    use HandlesGraphqlRequests {
+        resolveScalar as resolveScalarByConvention;
+    }
+
+    protected array $fallbackScalars = [
+        'DateTime' => \Acme\Graphql\Scalars\DateTime::class,
+    ];
+
+    protected function resolveScalar(string $name): ?object
+    {
+        return $this->resolveScalarByConvention($name)
+            ?? (isset($this->fallbackScalars[$name]) ? app($this->fallbackScalars[$name]) : null);
+    }
+}
+```
+
 ### Interfaces
 
 Butler GraphQL supports the use of interfaces in your schema but needs a little bit of help to be able to know what type to use for resolving fields.
