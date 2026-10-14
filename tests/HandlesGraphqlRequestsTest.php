@@ -5,6 +5,7 @@ namespace Butler\Graphql\Tests;
 use Butler\Graphql\Tests\Types\Thing;
 use Exception;
 use GraphQL\Error\Error;
+use GraphQL\Error\InvariantViolation;
 use GraphQL\Error\SyntaxError;
 use GraphQL\Language\AST\DocumentNode;
 use GraphQL\Type\Schema;
@@ -880,5 +881,141 @@ class HandlesGraphqlRequestsTest extends AbstractTestCase
             ],
             $data
         );
+    }
+
+    public function test_scalar_is_resolved_by_convention()
+    {
+        $controller = $this->app->make(GraphqlController::class);
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'query ($value: Even!) { literal: even(value: 4) variable: even(value: $value) }',
+            'variables' => ['value' => 6],
+        ]));
+
+        $this->assertSame(['data' => ['literal' => 4, 'variable' => 6]], $data);
+    }
+
+    public function test_scalar_parse_literal_is_used()
+    {
+        $controller = $this->app->make(GraphqlController::class);
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'query { even(value: 3) }',
+        ]));
+
+        $this->assertSame('Even cannot represent literal', Arr::get($data, 'errors.0.message'));
+    }
+
+    public function test_scalar_parse_value_is_used()
+    {
+        $controller = $this->app->make(GraphqlController::class);
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'query ($value: Even!) { even(value: $value) }',
+            'variables' => ['value' => 3],
+        ]));
+
+        $this->assertSame(
+            'Variable "$value" got invalid value 3; Even cannot represent value: 3',
+            Arr::get($data, 'errors.0.message')
+        );
+    }
+
+    public function test_scalar_serialize_is_used()
+    {
+        $controller = $this->app->make(GraphqlController::class);
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'query { oddEven }',
+        ]));
+
+        $this->assertSame(
+            'Expected a value of type Even but received: 3. Even cannot represent value: 3',
+            Arr::get($data, 'errors.0.message')
+        );
+    }
+
+    public function test_scalar_serialize_transforms_value()
+    {
+        $controller = $this->app->make(GraphqlController::class);
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'query { shout }',
+        ]));
+
+        $this->assertSame(['data' => ['shout' => 'HELLO']], $data);
+    }
+
+    public function test_scalar_without_class_is_left_untouched()
+    {
+        $controller = $this->app->make(GraphqlController::class);
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'query { untouched(value: "anything") }',
+        ]));
+
+        $this->assertSame(['data' => ['untouched' => 'anything']], $data);
+    }
+
+    public function test_scalar_class_must_implement_scalar_contract()
+    {
+        $handler = Mockery::mock(ExceptionHandler::class);
+        $handler->shouldReceive('report')->once()->with(Mockery::on(
+            fn ($e) => $e instanceof InvariantViolation
+                && $e->getMessage() === 'Scalar class Butler\Graphql\Tests\Scalars\NotAScalar must implement Butler\Graphql\Contracts\Scalar.'
+        ));
+
+        $this->app->instance(ExceptionHandler::class, $handler);
+
+        $controller = $this->app->make(GraphqlControllerWithInvalidScalar::class);
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'query { foo }',
+        ]));
+
+        $this->assertArrayNotHasKey('data', $data);
+    }
+
+    public function test_scalar_description_from_class()
+    {
+        $controller = $this->app->make(GraphqlController::class);
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'query { __type(name: "Even") { description } }',
+        ]));
+
+        $this->assertSame(['data' => ['__type' => ['description' => 'An even integer.']]], $data);
+    }
+
+    public function test_scalar_description_from_schema_takes_precedence_over_class()
+    {
+        $controller = $this->app->make(GraphqlController::class);
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'query { __type(name: "Shout") { description } }',
+        ]));
+
+        $this->assertSame(['data' => ['__type' => ['description' => 'Shout from schema.']]], $data);
+    }
+
+    public function test_scalar_specified_by_url_from_class()
+    {
+        $controller = $this->app->make(GraphqlController::class);
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'query { __type(name: "Even") { specifiedByURL } }',
+        ]));
+
+        $this->assertSame(['data' => ['__type' => ['specifiedByURL' => 'https://example.com/even']]], $data);
+    }
+
+    public function test_scalar_specified_by_url_from_schema_takes_precedence_over_class()
+    {
+        $controller = $this->app->make(GraphqlController::class);
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'query { __type(name: "Shout") { specifiedByURL } }',
+        ]));
+
+        $this->assertSame(['data' => ['__type' => ['specifiedByURL' => 'https://example.com/shout-from-schema']]], $data);
+    }
+
+    public function test_resolve_scalar_can_be_overridden()
+    {
+        $controller = $this->app->make(GraphqlControllerWithCustomScalarResolver::class);
+        $data = $controller(Request::create('/', 'POST', [
+            'query' => 'query { foo }',
+        ]));
+
+        $this->assertSame(['data' => ['foo' => 'custom:bar']], $data);
     }
 }

@@ -21,6 +21,10 @@ type Query {
     resolvesFalseCorrectly: [AnotherThing!]!
     thingsWithSubThings: [Thing!]!
     strictEloquentModel: StrictEloquentModel!
+    even(value: Even!): Even!
+    oddEven: Even!
+    shout: Shout!
+    untouched(value: Untouched!): Untouched!
 }
 
 type Mutation {
@@ -116,3 +120,10 @@ type VariousCasing {
     camelCase: String!
     snake_case: String!
 }
+
+scalar Even
+
+"Shout from schema."
+scalar Shout @specifiedBy(url: "https://example.com/shout-from-schema")
+
+scalar Untouched
