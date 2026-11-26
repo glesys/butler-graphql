@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - **BREAKING**: Drop support for Laravel 12 and PHP 8.2.
 
+### Fixed
+- Replace `spl_object_hash()`, deprecated in PHP 8.6, with `spl_object_id()` in the data loader.
+
 
 ## [13.1.0] - 2026-10-15
 
