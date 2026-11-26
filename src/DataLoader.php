@@ -108,7 +108,7 @@ class DataLoader
             private static function serializeKey($key)
             {
                 if (is_object($key)) {
-                    return spl_object_hash($key);
+                    return 'object:' . spl_object_id($key);
                 } elseif (is_array($key)) {
                     return md5(json_encode($key));
                 }
